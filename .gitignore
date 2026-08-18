@@ -1,0 +1,49 @@
+```
+# Compiled and build artifacts
+*.class
+*.o
+*.obj
+*.out
+target/
+build/
+
+# Dependencies
+.m2/
+.gradle/
+node_modules/
+lib/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+test-results/
+coverage/
+htmlcov/
+.coverage
+
+# Package management
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+```
