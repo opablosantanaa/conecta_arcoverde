@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * RF004: Recuperação de acesso via e-mail seguro.
- * Armazena tokens em memória (MVP). Em produção, migrar para tabela dedicada com expiração.
+ * RF004: RecuperaÃ§Ã£o de acesso via e-mail seguro.
+ * Armazena tokens em memÃ³ria (MVP). Em produÃ§Ã£o, migrar para tabela dedicada com expiraÃ§Ã£o.
  */
 @Service
 public class RecuperacaoSenhaService {
@@ -29,7 +29,7 @@ public class RecuperacaoSenhaService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
-    // token -> TokenInfo (em produção usar Redis ou tabela)
+    // token -> TokenInfo (em produÃ§Ã£o usar Redis ou tabela)
     private final Map<String, TokenInfo> tokens = new ConcurrentHashMap<>();
 
     public RecuperacaoSenhaService(UsuarioRepository usuarioRepository,
@@ -42,11 +42,11 @@ public class RecuperacaoSenhaService {
 
     @Transactional
     public void solicitarRedefinicao(EsqueciSenhaRequest request) {
-        // SEMPRE retorna sucesso para não vazar existência de e-mails (RN023, LGPD)
+        // SEMPRE retorna sucesso para nÃ£o vazar existÃªncia de e-mails (RN023, LGPD)
         usuarioRepository.findByEmail(request.email()).ifPresent(usuario -> {
             String token = gerarToken();
             tokens.put(token, new TokenInfo(usuario.getId(), Instant.now().plusMillis(EXPIRACAO_MS)));
-            emailService.enviarRecuperacaoSenha(usuario.getEmail(), token);
+            emailService.enviarEmailRecuperacaoSenha(usuario.getEmail(), token);
         });
     }
 
@@ -54,11 +54,11 @@ public class RecuperacaoSenhaService {
     public void redefinir(RedefinirSenhaRequest request) {
         TokenInfo info = tokens.get(request.token());
         if (info == null || info.expiraEm().isBefore(Instant.now())) {
-            throw new BusinessException("Token inválido ou expirado");
+            throw new BusinessException("Token invÃ¡lido ou expirado");
         }
 
         Usuario usuario = usuarioRepository.findById(info.usuarioId())
-                .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+                .orElseThrow(() -> new BusinessException("UsuÃ¡rio nÃ£o encontrado"));
 
         usuario.setSenhaHash(passwordEncoder.encode(request.novaSenha()));
         usuarioRepository.save(usuario);
