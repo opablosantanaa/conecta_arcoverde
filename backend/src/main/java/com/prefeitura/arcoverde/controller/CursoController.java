@@ -1,4 +1,4 @@
-package com.prefeitura.arcoverde.controller;
+﻿package com.prefeitura.arcoverde.controller;
 
 import com.prefeitura.arcoverde.model.Curso;
 import com.prefeitura.arcoverde.repository.CursoRepository;
@@ -18,7 +18,8 @@ public class CursoController {
 
     @GetMapping
     public ResponseEntity<List<Curso>> listarTodos() {
-        return ResponseEntity.ok(cursoRepository.findAll());
+        List<Curso> cursos = cursoRepository.findAll();
+        return ResponseEntity.ok(cursos != null ? cursos : List.of());
     }
 
     @GetMapping("/{id}")

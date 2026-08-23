@@ -1,4 +1,4 @@
-package com.prefeitura.arcoverde.controller;
+﻿package com.prefeitura.arcoverde.controller;
 
 import com.prefeitura.arcoverde.model.Vaga;
 import com.prefeitura.arcoverde.repository.VagaRepository;
@@ -18,7 +18,8 @@ public class VagaController {
 
     @GetMapping
     public ResponseEntity<List<Vaga>> listarTodas() {
-        return ResponseEntity.ok(vagaRepository.findAll());
+        List<Vaga> vagas = vagaRepository.findAll();
+        return ResponseEntity.ok(vagas != null ? vagas : List.of());
     }
 
     @GetMapping("/{id}")
