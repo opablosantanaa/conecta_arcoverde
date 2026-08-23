@@ -50,9 +50,9 @@ export default function Dashboard() {
   const todas = candidaturas?.content ?? [];
   const metricas = {
     enviadas: todas.length,
-    emAnalise: todas.filter(c => c.estado === 'EM_ANALISE' || c.estado === 'INSCRITO').length,
-    entrevistas: todas.filter(c => c.estado === 'CONVOCADO_ENTREVISTA').length,
-    selecionado: todas.filter(c => c.estado === 'SELECIONADO').length,
+    emAnalise: todas.filter((c: any) => c.estado === 'EM_ANALISE' || c.estado === 'INSCRITO').length,
+    entrevistas: todas.filter((c: any) => c.estado === 'CONVOCADO_ENTREVISTA').length,
+    selecionado: todas.filter((c: any) => c.estado === 'SELECIONADO').length,
   };
 
   const cardsMetricas = [
