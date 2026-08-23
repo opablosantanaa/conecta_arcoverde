@@ -1,9 +1,11 @@
 ﻿package com.prefeitura.arcoverde.controller;
 
 import com.prefeitura.arcoverde.model.Curso;
-import com.prefeitura.arcoverde.service.CursoService;
+import com.prefeitura.arcoverde.repository.CursoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -11,20 +13,17 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class CursoController {
 
-    private final CursoService cursoService;
-
-    public CursoController(CursoService cursoService) {
-        this.cursoService = cursoService;
-    }
+    @Autowired
+    private CursoRepository cursoRepository;
 
     @GetMapping
     public ResponseEntity<List<Curso>> listarTodos() {
-        return ResponseEntity.ok(cursoService.buscarTodos());
+        return ResponseEntity.ok(cursoRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Curso> buscarPorId(@PathVariable Long id) {
-        return cursoService.buscarPorId(id)
+        return cursoRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
