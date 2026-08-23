@@ -46,6 +46,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/debug/**").permitAll()
                 .requestMatchers("/api/vagas/public/**").permitAll()
                 .requestMatchers("/api/cursos/public/**").permitAll()
                 .requestMatchers("/api/areas/**").permitAll()
@@ -72,7 +73,7 @@ public class SecurityConfig {
         origins.add("http://localhost:3000");
         origins.add("http://localhost:5173");
 
-        // Adiciona o domínio da Vercel via variável de ambiente
+        // Adiciona o domÃ­nio da Vercel via variÃ¡vel de ambiente
         String frontendUrl = System.getenv("FRONTEND_URL");
         if (frontendUrl != null && !frontendUrl.isEmpty()) {
             origins.add(frontendUrl);
