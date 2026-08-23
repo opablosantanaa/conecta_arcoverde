@@ -10,8 +10,8 @@ const navLinks = [
 const institucionais = [
   { label: 'Sobre',               to: '/sobre' },
   { label: 'Contato',             to: '/contato' },
-  { label: 'Termos de Uso',       to: '/termos' },
-  { label: 'Política de Privacidade', to: '/privacidade' },
+  { label: 'Termos de Uso', to: '/termos' },
+  { label: 'PolÃ­tica de Privacidade', to: '/privacidade' },
 ];
 
 export function PublicFooter() {
@@ -35,7 +35,7 @@ export function PublicFooter() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-sm uppercase tracking-wide text-gray-300">Navegação</h4>
+            <h4 className="font-semibold mb-4 text-sm uppercase tracking-wide text-gray-300">NavegaÃ§Ã£o</h4>
             <ul className="space-y-2">
               {navLinks.map(l => (
                 <li key={l.to}>
@@ -82,7 +82,7 @@ export function PublicFooter() {
         </div>
 
         <div className="pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-          © {new Date().getFullYear()} Prefeitura Municipal de Arcoverde. Todos os direitos reservados.
+          Â© {new Date().getFullYear()} Prefeitura Municipal de Arcoverde. Todos os direitos reservados.
         </div>
       </div>
     </footer>

@@ -8,13 +8,15 @@ import { PrefeituraLayout } from '@/components/layout/PrefeituraLayout';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { SmartRedirect } from '@/components/auth/SmartRedirect';
 
-// PÃºblico
+// PÃƒÂºblico
 import Home               from '@/pages/public/Home';
 import Vagas              from '@/pages/public/Vagas';
 import Cursos             from '@/pages/public/Cursos';
 import DetalheVagaPublica from '@/pages/public/DetalheVagaPublica';
 import Login              from '@/pages/auth/Login';
 import Register           from '@/pages/auth/Register';
+import TermosDeUso        from '@/pages/public/TermosDeUso';
+import PoliticaPrivacidade  from '@/pages/public/PoliticaPrivacidade';
 
 // Candidato
 import Dashboard       from '@/pages/candidato/Dashboard';
@@ -73,12 +75,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* PÃºblico */}
+        {/* PÃƒÂºblico */}
         <Route element={<PublicLayout />}>
           <Route path="/"          element={<Home />} />
           <Route path="/vagas"     element={<Vagas />} />
           <Route path="/vagas/:id" element={<DetalheVagaPublica />} />
           <Route path="/cursos"    element={<Cursos />} />
+          <Route path="/termos"     element={<TermosDeUso />} />
+          <Route path="/privacidade" element={<PoliticaPrivacidade />} />
         </Route>
 
         {/* Auth */}
@@ -117,7 +121,7 @@ function App() {
           <Route path="/aca/solicitacoes"       element={<SolicitacoesAca />} />
         </Route>
 
-        {/* Portal Prefeitura (sem Indicadores e RelatÃ³rios) */}
+        {/* Portal Prefeitura (sem Indicadores e RelatÃƒÂ³rios) */}
         <Route element={<Protected perfis={['PREFEITURA', 'ADMIN']}><PrefeituraLayout /></Protected>}>
           <Route path="/prefeitura"        element={<PrefeituraDashboard />} />
           <Route path="/prefeitura/vagas"  element={<GerenciarVagas />} />
