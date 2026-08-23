@@ -7,9 +7,9 @@ import java.time.LocalDate;
 
 public record FormacaoRequest(
         Long id,
-        @NotBlank(message = "Instituição é obrigatória") @Size(max = 200) String instituicao,
-        @NotBlank(message = "Curso é obrigatório") @Size(max = 200) String curso,
-        @NotNull(message = "Nível é obrigatório") NivelFormacao nivel,
+        @Size(max = 200) String instituicao,
+        @Size(max = 200) String curso,
+        NivelFormacao nivel,
         LocalDate dataInicio,
         LocalDate dataFim,
         Boolean concluido

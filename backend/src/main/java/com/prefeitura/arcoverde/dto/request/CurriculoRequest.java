@@ -9,16 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record CurriculoRequest(
+        @NotBlank(message = "Objetivo profissional é obrigatório")
         @Size(max = 2000, message = "Objetivo deve ter no máximo 2000 caracteres")
         String objetivo,
 
+        @NotBlank(message = "Resumo profissional é obrigatório")
         @Size(max = 3000, message = "Resumo deve ter no máximo 3000 caracteres")
         String resumoProfissional,
 
         @Valid List<ExperienciaRequest> experiencias,
         @Valid List<FormacaoRequest> formacoes,
         @Valid List<CursoLivreRequest> cursosLivres,
-        @NotEmpty(message = "Selecione pelo menos uma �rea de interesse") List<Long> areasInteresseIds
+        @NotEmpty(message = "Selecione pelo menos uma área de interesse") List<Long> areasInteresseIds
 ) {
     public CurriculoRequest {
         if (experiencias == null) experiencias = new ArrayList<>();
