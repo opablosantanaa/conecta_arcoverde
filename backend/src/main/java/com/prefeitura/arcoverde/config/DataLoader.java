@@ -16,11 +16,11 @@ public class DataLoader {
         return args -> {
             if (vagaRepo.count() == 0) {
                 vagaRepo.save(new Vaga("Desenvolvedor Junior", "Vaga para iniciantes em Java", "Recife"));
-                vagaRepo.save(new Vaga("Analista de Suporte", "Suporte técnico nível 1", "Arcoverde"));
+                vagaRepo.save(new Vaga("Analista de Suporte", "Suporte tÃ©cnico nÃ­vel 1", "Arcoverde"));
             }
             if (cursoRepo.count() == 0) {
-                cursoRepo.save(new Curso("Curso de Java Básico", "Fundamentos da linguagem Java", 40));
-                cursoRepo.save(new Curso("Web Design com React", "Criação de interfaces modernas", 60));
+                cursoRepo.save(new Curso("Curso de Java BÃ¡sico", "Fundamentos da linguagem Java", 40));
+                cursoRepo.save(new Curso("Web Design com React", "CriaÃ§Ã£o de interfaces modernas", 60));
             }
         };
     }

@@ -17,7 +17,7 @@ export default function Cursos() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Cursos Disponíveis</h1>
+      <h1 className="text-2xl font-bold mb-4">Cursos DisponÃ­veis</h1>
       {cursos.length === 0 ? <p>Nenhum curso encontrado.</p> : (
         <div className="grid gap-4 md:grid-cols-2">
           {cursos.map(c => (

@@ -17,7 +17,7 @@ export default function Vagas() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Vagas Disponíveis</h1>
+      <h1 className="text-2xl font-bold mb-4">Vagas DisponÃ­veis</h1>
       {vagas.length === 0 ? <p>Nenhuma vaga encontrada.</p> : (
         <div className="grid gap-4 md:grid-cols-2">
           {vagas.map(v => (
