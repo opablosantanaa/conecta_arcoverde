@@ -72,6 +72,7 @@ public class SecurityConfig {
         List<String> origins = new ArrayList<>();
         origins.add("http://localhost:3000");
         origins.add("http://localhost:5173");
+        origins.add("https://conecta-arco.vercel.app");
 
         // Adiciona o domÃ­nio da Vercel via variÃ¡vel de ambiente
         String frontendUrl = System.getenv("FRONTEND_URL");
@@ -90,3 +91,4 @@ public class SecurityConfig {
         return source;
     }
 }
+
