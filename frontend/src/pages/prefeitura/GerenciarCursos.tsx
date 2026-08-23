@@ -14,6 +14,7 @@ export default function GerenciarCursos() {
   const queryClient = useQueryClient();
   const [modalCurso, setModalCurso] = useState(false);
   const [cursoEditando, setCursoEditando] = useState<any>(null);
+  const [errorMsg, setErrorMsg] = useState('');
   const [form, setForm] = useState({
     titulo: '', descricao: '', instituicao: '', areaId: '',
     linkInscricao: '', linkPlataforma: '', cargaHoraria: '', dataInicio: '', dataFim: '',
@@ -41,23 +42,35 @@ export default function GerenciarCursos() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['prefeitura-cursos'] });
+      setErrorMsg('');
       fecharModal();
+    },
+    onError: (error: any) => {
+      setErrorMsg(error.response?.data?.message || 'Não foi possível salvar o curso. Tente novamente.');
     },
   });
 
   const desativarMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/prefeitura/cursos/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['prefeitura-cursos'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['prefeitura-cursos'] });
+      setErrorMsg('');
+    },
+    onError: (error: any) => {
+      setErrorMsg(error.response?.data?.message || 'Não foi possível desativar o curso. Tente novamente.');
+    },
   });
 
   const abrirNovo = () => {
     setCursoEditando(null);
+    setErrorMsg('');
     setForm({ titulo: '', descricao: '', instituicao: '', areaId: '', linkInscricao: '', linkPlataforma: '', cargaHoraria: '', dataInicio: '', dataFim: '' });
     setModalCurso(true);
   };
 
   const abrirEdicao = (curso: any) => {
     setCursoEditando(curso);
+    setErrorMsg('');
     setForm({
       titulo: curso.titulo || '', descricao: curso.descricao || '', instituicao: curso.instituicao || '',
       areaId: curso.areaId ? String(curso.areaId) : '', linkInscricao: curso.linkInscricao || '',
@@ -125,6 +138,7 @@ export default function GerenciarCursos() {
       {modalCurso && (
         <Modal title={cursoEditando ? 'Editar Curso' : 'Novo Curso'} onClose={fecharModal}>
           <div className="space-y-4">
+            {errorMsg && <p role="alert" className="text-sm text-error">{errorMsg}</p>}
             <Input label="Título do curso *" value={form.titulo} onChange={e => setForm(f => ({ ...f, titulo: e.target.value }))} />
             <div>
               <label className="block text-sm font-medium text-content dark:text-content-dark mb-1.5">Descrição</label>

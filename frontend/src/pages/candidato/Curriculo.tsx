@@ -37,7 +37,7 @@ const niveisFormacao = [
 
 const estadoLabels: Record<string, { label: string; variant: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info' }> = {
   RASCUNHO:            { label: 'Rascunho',            variant: 'default' },
-  PENDENTE_VALIDACAO:  { label: 'Em validacao',        variant: 'warning' },
+  PENDENTE_VALIDACAO:  { label: 'Em validação',        variant: 'warning' },
   VALIDADO:            { label: 'Validado',            variant: 'success' },
   REJEITADO:           { label: 'Rejeitado',           variant: 'error' },
 };
@@ -55,6 +55,7 @@ export default function Curriculo() {
   const [estado, setEstado] = useState<string>('RASCUNHO');
   const [motivoRejeicao, setMotivoRejeicao] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState<string>('');
 
   const { data: areas } = useQuery({
     queryKey: ['areas'],
@@ -78,7 +79,7 @@ export default function Curriculo() {
         setEstado(c.estado || 'RASCUNHO');
         setMotivoRejeicao(c.motivoRejeicao || '');
       } catch {
-        // Curriculo ainda nao existe
+        // Currículo ainda não existe.
       }
       return null;
     },
@@ -88,8 +89,13 @@ export default function Curriculo() {
     mutationFn: () => api.put('/candidato/curriculo', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['meu-curriculo'] });
-      setSuccessMsg('Curriculo salvo com sucesso!');
+      setErrorMsg('');
+      setSuccessMsg('Currículo salvo com sucesso!');
       setTimeout(() => setSuccessMsg(''), 3000);
+    },
+    onError: (error: any) => {
+      setSuccessMsg('');
+      setErrorMsg(error.response?.data?.message || 'Não foi possível salvar o currículo. Revise os campos e tente novamente.');
     },
   });
 
@@ -97,11 +103,25 @@ export default function Curriculo() {
     mutationFn: () => api.post('/candidato/curriculo/submeter'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['meu-curriculo'] });
+      setErrorMsg('');
       setEstado('PENDENTE_VALIDACAO');
-      setSuccessMsg('Curriculo enviado para validacao!');
+      setSuccessMsg('Currículo enviado para validação!');
       setTimeout(() => setSuccessMsg(''), 3000);
     },
+    onError: (error: any) => {
+      setSuccessMsg('');
+      setErrorMsg(error.response?.data?.message || 'Não foi possível enviar o currículo para validação.');
+    },
   });
+
+  const salvarEEnviarParaValidacao = async () => {
+    try {
+      await saveMutation.mutateAsync();
+      await submitMutation.mutateAsync();
+    } catch {
+      // A mensagem retornada pela API é exibida pelos handlers onError das mutações.
+    }
+  };
 
   const addExperiencia = () => setData(d => ({
     ...d, experiencias: [...d.experiencias, { empresa: '', cargo: '', descricao: '', dataInicio: '', dataFim: '', atual: false }]
@@ -156,10 +176,10 @@ export default function Curriculo() {
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-content dark:text-content-dark mb-1">
-            Meu Curriculo
+            Meu Currículo
           </h1>
           <p className="text-content-secondary dark:text-content-secondary">
-            Mantenha seu curriculo atualizado e validado para se candidatar.
+            Mantenha seu currículo atualizado e validado para se candidatar.
           </p>
         </div>
         <Badge variant={st.variant} size="md">{st.label}</Badge>
@@ -186,6 +206,15 @@ export default function Curriculo() {
         </Card>
       )}
 
+      {errorMsg && (
+        <Card padding="md" className="border-l-4 border-l-error bg-error/5" role="alert">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-error" />
+            <span className="text-sm font-medium text-error">{errorMsg}</span>
+          </div>
+        </Card>
+      )}
+
       {/* Objetivo e resumo */}
       <Card padding="lg">
         <h2 className="font-semibold text-content dark:text-content-dark mb-4">Informações profissionais</h2>
@@ -200,7 +229,7 @@ export default function Curriculo() {
               rows={3}
               maxLength={2000}
               className="w-full rounded-btn border border-border dark:border-border-dark bg-surface dark:bg-surface-dark-secondary px-3 py-2.5 text-sm focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
-              placeholder="Ex: Atuar como analista administrativo em empresa de medio porte..."
+              placeholder="Ex: Atuar como analista administrativo em empresa de médio porte..."
             />
           </div>
           <div>
@@ -213,7 +242,7 @@ export default function Curriculo() {
               rows={5}
               maxLength={3000}
               className="w-full rounded-btn border border-border dark:border-border-dark bg-surface dark:bg-surface-dark-secondary px-3 py-2.5 text-sm focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
-              placeholder="Descreva brevemente sua trajetoria, habilidades principais e diferenciais..."
+              placeholder="Descreva brevemente sua trajetória, habilidades principais e diferenciais..."
             />
           </div>
         </div>
@@ -432,10 +461,7 @@ export default function Curriculo() {
               <Save className="w-4 h-4" /> Salvar rascunho
             </Button>
             <Button
-              onClick={async () => {
-                await saveMutation.mutateAsync();
-                submitMutation.mutate();
-              }}
+              onClick={salvarEEnviarParaValidacao}
               isLoading={submitMutation.isPending || saveMutation.isPending}
               disabled={estado === 'VALIDADO' || estado === 'PENDENTE_VALIDACAO'}
             >

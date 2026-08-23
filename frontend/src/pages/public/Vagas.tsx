@@ -13,9 +13,9 @@ import { EmptyState } from '@/components/ui/EmptyState';
 
 const contractLabels: Record<string, string> = {
   CLT: 'CLT',
-  TEMPORARIO: 'TemporÃ¡rio',
-  ESTAGIO: 'EstÃ¡gio',
-  AUTONOMO: 'AutÃ´nomo',
+  TEMPORARIO: 'Temporário',
+  ESTAGIO: 'Estágio',
+  AUTONOMO: 'Autônomo',
   OUTROS: 'Outros',
 };
 
@@ -92,20 +92,20 @@ export default function Vagas() {
       </div>
 
       <Input
-        placeholder="TÃ­tulo da vaga"
+        placeholder="Título da vaga"
         value={filters.titulo}
         onChange={e => setFilters(f => ({ ...f, titulo: e.target.value }))}
         leftIcon={<Search className="w-4 h-4" />}
       />
 
       <div>
-        <label className="block text-sm font-medium text-content dark:text-content-dark mb-1.5">Ãrea</label>
+        <label className="block text-sm font-medium text-content dark:text-content-dark mb-1.5">Área</label>
         <select
           value={filters.areaId ?? ''}
           onChange={e => setFilters(f => ({ ...f, areaId: e.target.value ? Number(e.target.value) : undefined }))}
           className="w-full rounded-btn border border-border dark:border-border-dark bg-surface dark:bg-surface-dark-secondary px-3 py-2.5 text-sm focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
         >
-          <option value="">Todas as Ã¡reas</option>
+          <option value="">Todas as áreas</option>
           {areas?.map(a => <option key={a.id} value={a.id}>{a.nome}</option>)}
         </select>
       </div>
@@ -136,7 +136,7 @@ export default function Vagas() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-content dark:text-content-dark mb-2">Vagas disponÃ­veis</h1>
+        <h1 className="text-3xl font-bold text-content dark:text-content-dark mb-2">Vagas disponíveis</h1>
         <p className="text-content-secondary dark:text-content-secondary">
           {isLoading ? 'Buscando vagas...' : `${total} ${total === 1 ? 'vaga encontrada' : 'vagas encontradas'}`}
         </p>

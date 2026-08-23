@@ -3,7 +3,10 @@ import { useAuthStore } from '@/store/authStore';
 
 // Em desenvolvimento usa /api (proxy do Vite)
 // Em produção usa a URL da variável de ambiente VITE_API_URL
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const configuredApiUrl = import.meta.env.VITE_API_URL?.replace(/\/+$/, '');
+const API_URL = configuredApiUrl
+  ? (configuredApiUrl.endsWith('/api') ? configuredApiUrl : `${configuredApiUrl}/api`)
+  : '/api';
 
 const api = axios.create({
   baseURL: API_URL,

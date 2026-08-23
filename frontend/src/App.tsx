@@ -8,7 +8,7 @@ import { PrefeituraLayout } from '@/components/layout/PrefeituraLayout';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { SmartRedirect } from '@/components/auth/SmartRedirect';
 
-// PÃƒÂºblico
+// Público
 import Home               from '@/pages/public/Home';
 import Vagas              from '@/pages/public/Vagas';
 import Cursos             from '@/pages/public/Cursos';
@@ -75,7 +75,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* PÃƒÂºblico */}
+        {/* Público */}
         <Route element={<PublicLayout />}>
           <Route path="/"          element={<Home />} />
           <Route path="/vagas"     element={<Vagas />} />
@@ -121,7 +121,7 @@ function App() {
           <Route path="/aca/solicitacoes"       element={<SolicitacoesAca />} />
         </Route>
 
-        {/* Portal Prefeitura (sem Indicadores e RelatÃƒÂ³rios) */}
+        {/* Portal Prefeitura (sem Indicadores e Relatórios) */}
         <Route element={<Protected perfis={['PREFEITURA', 'ADMIN']}><PrefeituraLayout /></Protected>}>
           <Route path="/prefeitura"        element={<PrefeituraDashboard />} />
           <Route path="/prefeitura/vagas"  element={<GerenciarVagas />} />
