@@ -16,7 +16,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -64,19 +66,24 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // ORIGENS PERMITIDAS (CORS)
-        // Em produção, adicione o domínio da Vercel aqui
-        String vercelDomain = System.getenv("FRONTEND_URL");
-        java.util.List<String> origins = new java.util.ArrayList<>();
+
+        // ORIGENS PERMITIDAS
+        List<String> origins = new ArrayList<>();
         origins.add("http://localhost:3000");
         origins.add("http://localhost:5173");
-        if (vercelDomain != null && !vercelDomain.isEmpty()) {
-            origins.add(vercelDomain);
+
+        // Adiciona o domínio da Vercel via variável de ambiente
+        String frontendUrl = System.getenv("FRONTEND_URL");
+        if (frontendUrl != null && !frontendUrl.isEmpty()) {
+            origins.add(frontendUrl);
         }
+
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -1,8 +1,10 @@
 spring:
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3308}/${DB_NAME:conecta_arcoverde}?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=America/Recife
-    username: ${DB_USER:root}
-    password: ${DB_PASSWORD:}
+    # Railway usa variáveis específicas do plugin MySQL
+    # Local usa DB_HOST/DB_PORT do .env
+    url: jdbc:mysql://${MYSQLHOST:${DB_HOST:localhost}}:${MYSQLPORT:${DB_PORT:3308}}/${MYSQLDATABASE:${DB_NAME:conecta_arcoverde}}?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=America/Recife&useSSL=${DB_SSL:false}
+    username: ${MYSQLUSER:${DB_USER:root}}
+    password: ${MYSQLPASSWORD:${DB_PASSWORD:}}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
@@ -38,7 +40,7 @@ jwt:
   expiration: ${JWT_EXPIRATION:86400000}
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:8080}
 
 springdoc:
   api-docs:
