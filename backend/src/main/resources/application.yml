@@ -1,10 +1,8 @@
 spring:
   datasource:
-    # Railway usa variáveis específicas do plugin MySQL
-    # Local usa DB_HOST/DB_PORT do .env
-    url: jdbc:mysql://${MYSQLHOST:${DB_HOST:localhost}}:${MYSQLPORT:${DB_PORT:3308}}/${MYSQLDATABASE:${DB_NAME:conecta_arcoverde}}?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=America/Recife&useSSL=${DB_SSL:false}
-    username: ${MYSQLUSER:${DB_USER:root}}
-    password: ${MYSQLPASSWORD:${DB_PASSWORD:}}
+    url: ${DB_URL:jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:conecta_arcoverde}?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=America/Recife&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
@@ -19,6 +17,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
