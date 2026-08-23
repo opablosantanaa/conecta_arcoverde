@@ -56,7 +56,7 @@ public class DebugController {
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
         usuario.setEmail(email);
-        usuario.setSenha(passwordEncoder.encode(senha));
+        usuario.setSenhaHash(passwordEncoder.encode(senha));
         usuario.setPerfil(perfil);
         usuario.setAtivo(true);
         usuario.setCriadoEm(LocalDateTime.now());
