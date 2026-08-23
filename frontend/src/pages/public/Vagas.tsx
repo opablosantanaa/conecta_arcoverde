@@ -19,15 +19,26 @@ const contractLabels: Record<string, string> = {
   OUTROS: 'Outros',
 };
 
-function formatSalary(min: number | null, max: number | null) {
-  if (!min && !max) return 'A combinar';
-  const fmt = (v: number) => v.toLocaleString('pt-BR', {
+function formatSalary(min: number | null, max: number | null): string {
+  if (min === null && max === null) {
+    return 'A combinar';
+  }
+
+  const fmt = (v: number): string => v.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
     maximumFractionDigits: 0
   });
-  if (min && max) return `${fmt(min)} - ${fmt(max)}`;
-  return min ? `A partir de ${fmt(min)}` : `Até ${fmt(max)}`;
+
+  if (min !== null && max !== null) {
+    return `${fmt(min)} - ${fmt(max)}`;
+  }
+
+  if (min !== null) {
+    return `A partir de ${fmt(min)}`;
+  }
+
+  return `Até ${fmt(max as number)}`;
 }
 
 function formatDate(dateStr: string) {
