@@ -1,4 +1,4 @@
-﻿package com.prefeitura.arcoverde.controller;
+package com.prefeitura.arcoverde.controller;
 
 import com.prefeitura.arcoverde.model.Vaga;
 import com.prefeitura.arcoverde.repository.VagaRepository;

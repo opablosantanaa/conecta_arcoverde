@@ -1,4 +1,4 @@
-﻿package com.prefeitura.arcoverde.controller;
+package com.prefeitura.arcoverde.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +11,11 @@ import java.util.Map;
 public class DashboardController {
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> obterDashboard() {
-        Map<String, Object> dados = new HashMap<>();
-        dados.put("vagasAtivas", 0);
-        dados.put("cursosDisponiveis", 0);
-        dados.put("usuariosCadastrados", 0);
-        return ResponseEntity.ok(dados);
+    public ResponseEntity<Map<String, Object>> getDashboard() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("vagas", 0);
+        stats.put("cursos", 0);
+        stats.put("candidatos", 0);
+        return ResponseEntity.ok(stats);
     }
 }
