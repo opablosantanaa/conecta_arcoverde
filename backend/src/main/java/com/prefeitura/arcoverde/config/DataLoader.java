@@ -1,36 +1,27 @@
-﻿package com.prefeitura.arcoverde.config;
+package com.prefeitura.arcoverde.config;
 
 import com.prefeitura.arcoverde.model.Vaga;
 import com.prefeitura.arcoverde.model.Curso;
 import com.prefeitura.arcoverde.repository.VagaRepository;
 import com.prefeitura.arcoverde.repository.CursoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@Component
-public class DataLoader implements CommandLineRunner {
+@Configuration
+public class DataLoader {
 
-    @Autowired
-    private VagaRepository vagaRepository;
-
-    @Autowired
-    private CursoRepository cursoRepository;
-
-    @Override
-    public void run(String... args) {
-        if (vagaRepository.count() == 0) {
-            System.out.println("Populando banco com vagas de exemplo...");
-            vagaRepository.save(new Vaga(null, "Desenvolvedor Java Júnior", "Empresa Tech LTDA", "Remoto", "CLT", true));
-            vagaRepository.save(new Vaga(null, "Analista de Suporte", "Prefeitura de Arcoverde", "Arcoverde - PE", "Estágio", true));
-            vagaRepository.save(new Vaga(null, "Eletricista Predial", "Construtora Silva", "Arcoverde - PE", "Contrato Temporário", false));
-        }
-
-        if (cursoRepository.count() == 0) {
-            System.out.println("Populando banco com cursos de exemplo...");
-            cursoRepository.save(new Curso(null, "Introdução à Programação Web", "SENAI", "40h", "Online", true));
-            cursoRepository.save(new Curso(null, "Excel Avançado para Negócios", "Fundação Bradesco", "20h", "Presencial", true));
-            cursoRepository.save(new Curso(null, "Auxiliar Administrativo", "Prefeitura de Arcoverde", "60h", "Presencial", false));
-        }
+    @Bean
+    CommandLineRunner init(VagaRepository vagaRepo, CursoRepository cursoRepo) {
+        return args -> {
+            if (vagaRepo.count() == 0) {
+                vagaRepo.save(new Vaga("Desenvolvedor Junior", "Vaga para iniciantes em Java", "Recife"));
+                vagaRepo.save(new Vaga("Analista de Suporte", "Suporte técnico nível 1", "Arcoverde"));
+            }
+            if (cursoRepo.count() == 0) {
+                cursoRepo.save(new Curso("Curso de Java Básico", "Fundamentos da linguagem Java", 40));
+                cursoRepo.save(new Curso("Web Design com React", "Criação de interfaces modernas", 60));
+            }
+        };
     }
 }

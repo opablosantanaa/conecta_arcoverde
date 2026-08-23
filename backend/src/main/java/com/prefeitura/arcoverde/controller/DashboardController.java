@@ -1,39 +1,22 @@
-﻿package com.prefeitura.arcoverde.controller;
+package com.prefeitura.arcoverde.controller;
 
-import com.prefeitura.arcoverde.repository.UsuarioRepository;
-import com.prefeitura.arcoverde.repository.VagaRepository;
-import com.prefeitura.arcoverde.repository.CursoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/dashboard")
-@CrossOrigin(origins = "*")
+@RequestMapping("/dashboard")
 public class DashboardController {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private VagaRepository vagaRepository;
-
-    @Autowired
-    private CursoRepository cursoRepository;
-
     @GetMapping
-    public ResponseEntity<Map<String, Object>> obterResumo() {
+    public ResponseEntity<Map<String, Object>> getStats() {
         Map<String, Object> stats = new HashMap<>();
-        stats.put("totalUsuarios", usuarioRepository.count());
-        stats.put("totalVagas", vagaRepository.count());
-        stats.put("totalCursos", cursoRepository.count());
-        
-        // Exemplo de dado extra por tipo (ajuste conforme sua enum Role)
-        stats.put("usuariosPorTipo", "Disponível em versão completa"); 
-        
+        stats.put("vagas", 0);
+        stats.put("cursos", 0);
+        stats.put("candidatos", 0);
         return ResponseEntity.ok(stats);
     }
 }

@@ -1,4 +1,4 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -9,7 +9,6 @@ export const api = axios.create({
   },
 });
 
-// Interceptor para adicionar token se existir
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
