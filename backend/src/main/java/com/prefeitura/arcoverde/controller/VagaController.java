@@ -1,14 +1,9 @@
 ﻿package com.prefeitura.arcoverde.controller;
 
 import com.prefeitura.arcoverde.model.Vaga;
-import com.prefeitura.arcoverde.repository.VagaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.prefeitura.arcoverde.service.VagaService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
@@ -16,11 +11,21 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class VagaController {
 
-    @Autowired
-    private VagaRepository vagaRepository;
+    private final VagaService vagaService;
+
+    public VagaController(VagaService vagaService) {
+        this.vagaService = vagaService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Vaga>> listarTodas() {
-        return ResponseEntity.ok(vagaRepository.findAll());
+        return ResponseEntity.ok(vagaService.buscarTodas());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Vaga> buscarPorId(@PathVariable Long id) {
+        return vagaService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

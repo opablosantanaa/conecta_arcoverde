@@ -1,14 +1,9 @@
 ﻿package com.prefeitura.arcoverde.controller;
 
 import com.prefeitura.arcoverde.model.Curso;
-import com.prefeitura.arcoverde.repository.CursoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.prefeitura.arcoverde.service.CursoService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
@@ -16,11 +11,21 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class CursoController {
 
-    @Autowired
-    private CursoRepository cursoRepository;
+    private final CursoService cursoService;
+
+    public CursoController(CursoService cursoService) {
+        this.cursoService = cursoService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Curso>> listarTodos() {
-        return ResponseEntity.ok(cursoRepository.findAll());
+        return ResponseEntity.ok(cursoService.buscarTodos());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Curso> buscarPorId(@PathVariable Long id) {
+        return cursoService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
