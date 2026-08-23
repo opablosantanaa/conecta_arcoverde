@@ -1,7 +1,6 @@
 package com.prefeitura.arcoverde.service;
 
 import com.prefeitura.arcoverde.dto.request.CursoLivreRequest;
-import com.prefeitura.arcoverde.dto.request.ContatoCandidatoRequest;
 import com.prefeitura.arcoverde.dto.request.CurriculoRequest;
 import com.prefeitura.arcoverde.dto.request.ExperienciaRequest;
 import com.prefeitura.arcoverde.dto.request.FormacaoRequest;
@@ -60,14 +59,14 @@ public class CurriculoService {
     public CurriculoResponse buscarMeuCurriculo() {
         Long usuarioId = usuarioAtualId();
         Curriculo curriculo = curriculoRepository.findByCandidatoUsuarioId(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Currículo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Curriculo nao encontrado"));
         return montarResponse(curriculo);
     }
 
     @Transactional(readOnly = true)
     public CurriculoResponse buscarPorCandidatoId(Long candidatoId) {
         Curriculo curriculo = curriculoRepository.findByCandidatoId(candidatoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Currículo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Curriculo nao encontrado"));
         return montarResponse(curriculo);
     }
 
@@ -87,7 +86,7 @@ public class CurriculoService {
     public CurriculoResponse salvarMeuCurriculo(CurriculoRequest request, HttpServletRequest httpRequest) {
         Long usuarioId = usuarioAtualId();
         Candidato candidato = candidatoRepository.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Candidato não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Candidato nao encontrado"));
 
         Curriculo curriculo = curriculoRepository.findByCandidatoId(candidato.getId())
                 .orElse(Curriculo.builder()
@@ -99,32 +98,14 @@ public class CurriculoService {
     }
 
     @Transactional
-    public void atualizarMeuContato(ContatoCandidatoRequest request) {
-        Long usuarioId = usuarioAtualId();
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-
-        String email = request.email().trim().toLowerCase();
-        if (Boolean.TRUE.equals(usuarioRepository.existsByEmailAndIdNot(email, usuarioId))) {
-            throw new BusinessException("Este e-mail já está em uso");
-        }
-
-        usuario.setEmail(email);
-        usuario.setTelefone(request.telefone().trim());
-        usuarioRepository.save(usuario);
-    }
-
-    @Transactional
     public CurriculoResponse submeterParaValidacao(HttpServletRequest httpRequest) {
         Long usuarioId = usuarioAtualId();
         Curriculo curriculo = curriculoRepository.findByCandidatoUsuarioId(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Currículo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Curriculo nao encontrado"));
 
         if (curriculo.getEstado() == Curriculo.EstadoCurriculo.VALIDADO) {
-            throw new BusinessException("Currículo já está validado");
+            throw new BusinessException("Curriculo ja esta validado");
         }
-
-        validarDadosParaSubmissao(curriculo, usuarioId);
 
         curriculo.setEstado(Curriculo.EstadoCurriculo.PENDENTE_VALIDACAO);
         curriculo.setMotivoRejeicao(null);
@@ -139,7 +120,7 @@ public class CurriculoService {
     @Transactional
     public CurriculoResponse validar(Long curriculoId, HttpServletRequest httpRequest) {
         Curriculo curriculo = curriculoRepository.findById(curriculoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Currículo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Curriculo nao encontrado"));
 
         curriculo.setEstado(Curriculo.EstadoCurriculo.VALIDADO);
         curriculo.setMotivoRejeicao(null);
@@ -157,10 +138,10 @@ public class CurriculoService {
     @Transactional
     public CurriculoResponse rejeitar(Long curriculoId, String motivo, HttpServletRequest httpRequest) {
         if (motivo == null || motivo.isBlank()) {
-            throw new BusinessException("Motivo da rejeição é obrigatório");
+            throw new BusinessException("Motivo da rejeicao e obrigatorio");
         }
         Curriculo curriculo = curriculoRepository.findById(curriculoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Currículo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Curriculo nao encontrado"));
 
         curriculo.setEstado(Curriculo.EstadoCurriculo.REJEITADO);
         curriculo.setMotivoRejeicao(motivo);
@@ -182,7 +163,7 @@ public class CurriculoService {
         curriculo.setObjetivo(request.objetivo());
         curriculo.setResumoProfissional(request.resumoProfissional());
 
-        // Se já estava VALIDADO e o usuário está editando, volta para rascunho
+        // Se ja estava VALIDADO e o usuario esta editando, volta para rascunho
         if (curriculo.getEstado() == Curriculo.EstadoCurriculo.VALIDADO) {
             curriculo.setEstado(Curriculo.EstadoCurriculo.RASCUNHO);
             curriculo.setValidadoPor(null);
@@ -190,11 +171,13 @@ public class CurriculoService {
             curriculo.setMotivoRejeicao(null);
         }
 
-        // Variável final para ser usada nas lambdas abaixo
+        // Variavel final para ser usada nas lambdas abaixo
         final Curriculo curriculoSalvo = curriculoRepository.save(curriculo);
+        curriculoRepository.flush();
 
-        // Experiências
+        // Experiencias
         experienciaRepository.deleteByCurriculoId(curriculoSalvo.getId());
+        experienciaRepository.flush();
         List<Experiencia> exps = request.experiencias().stream().map(r -> Experiencia.builder()
                 .curriculo(curriculoSalvo)
                 .empresa(r.empresa())
@@ -206,8 +189,9 @@ public class CurriculoService {
                 .build()).toList();
         experienciaRepository.saveAll(exps);
 
-        // Formações
+        // Formacoes
         formacaoRepository.deleteByCurriculoId(curriculoSalvo.getId());
+        formacaoRepository.flush();
         List<Formacao> forms = request.formacoes().stream().map(r -> Formacao.builder()
                 .curriculo(curriculoSalvo)
                 .instituicao(r.instituicao())
@@ -221,6 +205,7 @@ public class CurriculoService {
 
         // Cursos livres
         cursoLivreRepository.deleteByCurriculoId(curriculoSalvo.getId());
+        cursoLivreRepository.flush();
         List<CursoLivre> cursos = request.cursosLivres().stream().map(r -> CursoLivre.builder()
                 .curriculo(curriculoSalvo)
                 .nome(r.nome())
@@ -230,10 +215,13 @@ public class CurriculoService {
                 .build()).toList();
         cursoLivreRepository.saveAll(cursos);
 
-        // Áreas de interesse
+        // Areas de interesse (CORRECAO: flush imediato e distinct)
         areaInteresseRepository.deleteByCandidatoId(curriculoSalvo.getCandidato().getId());
+        areaInteresseRepository.flush(); // CRITICO: Forca o DELETE no banco antes do INSERT
+        
         if (!request.areasInteresseIds().isEmpty()) {
-            List<Area> areas = areaRepository.findAllById(request.areasInteresseIds());
+            List<Long> idsDistintos = request.areasInteresseIds().stream().distinct().toList();
+            List<Area> areas = areaRepository.findAllById(idsDistintos);
             List<AreaInteresse> interesses = areas.stream().map(a -> AreaInteresse.builder()
                     .candidato(curriculoSalvo.getCandidato())
                     .area(a)
@@ -269,32 +257,6 @@ public class CurriculoService {
         if (auth != null && auth.getPrincipal() instanceof UserDetailsImpl u) {
             return u.getId();
         }
-        throw new BusinessException("Usuário não autenticado");
-    }
-
-    private void validarDadosParaSubmissao(Curriculo curriculo, Long usuarioId) {
-        List<String> pendencias = new ArrayList<>();
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-
-        if (curriculo.getObjetivo() == null || curriculo.getObjetivo().isBlank()) {
-            pendencias.add("objetivo profissional");
-        }
-        if (curriculo.getResumoProfissional() == null || curriculo.getResumoProfissional().isBlank()) {
-            pendencias.add("resumo profissional");
-        }
-        if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
-            pendencias.add("e-mail");
-        }
-        if (usuario.getTelefone() == null || usuario.getTelefone().isBlank()) {
-            pendencias.add("telefone");
-        }
-        if (areaInteresseRepository.findByCandidatoId(curriculo.getCandidato().getId()).isEmpty()) {
-            pendencias.add("ao menos uma área de interesse");
-        }
-
-        if (!pendencias.isEmpty()) {
-            throw new BusinessException("Para enviar para validação, preencha: " + String.join(", ", pendencias));
-        }
+        throw new BusinessException("Usuario nao autenticado");
     }
 }
