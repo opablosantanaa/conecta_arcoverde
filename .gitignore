@@ -1,49 +1,48 @@
-```
-# Compiled and build artifacts
-*.class
-*.o
-*.obj
-*.out
-target/
-build/
+# ============================================
+# CONECTA ARCOVERDE - Arquivos Ignorados
+# ============================================
 
-# Dependencies
-.m2/
-.gradle/
-node_modules/
-lib/
-
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment
+# Variáveis de ambiente (NUNCA versionar)
 .env
 .env.local
-*.env.*
+.env.*.local
 
-# Editors
-.vscode/
+# Backend
+backend/target/
+backend/.mvn/
+backend/*.class
+backend/*.jar
+backend/*.war
+backend/*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# IDE
 .idea/
+.vscode/
 *.iml
-*.ipr
-*.iws
-
-# OS
+*.swp
+*.swo
 .DS_Store
-Thumbs.db
 
-# Testing
-test-results/
+# Docker
+docker-compose.override.yml
+
+# Build
+build/
+out/
+
+# Testes
 coverage/
-htmlcov/
-.coverage
+.nyc_output/
 
-# Package management
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-```
+# Misc
+*.log
+*.tmp
+*.temp
