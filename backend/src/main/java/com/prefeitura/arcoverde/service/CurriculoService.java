@@ -1,5 +1,6 @@
 package com.prefeitura.arcoverde.service;
 
+import com.prefeitura.arcoverde.dto.request.ContatoCandidatoRequest;
 import com.prefeitura.arcoverde.dto.request.CursoLivreRequest;
 import com.prefeitura.arcoverde.dto.request.CurriculoRequest;
 import com.prefeitura.arcoverde.dto.request.ExperienciaRequest;
@@ -53,6 +54,23 @@ public class CurriculoService {
         this.areaRepository = areaRepository;
         this.usuarioRepository = usuarioRepository;
         this.auditoriaService = auditoriaService;
+    }
+
+    @Transactional
+    public void atualizarMeuContato(ContatoCandidatoRequest request) {
+        Long usuarioId = usuarioAtualId();
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario nao encontrado"));
+        
+        usuarioRepository.findByEmail(request.email()).ifPresent(existingUser -> {
+            if (!existingUser.getId().equals(usuarioId)) {
+                throw new BusinessException("Este e-mail ja esta em uso por outro usuario");
+            }
+        });
+
+        usuario.setEmail(request.email());
+        usuario.setTelefone(request.telefone());
+        usuarioRepository.save(usuario);
     }
 
     @Transactional(readOnly = true)
