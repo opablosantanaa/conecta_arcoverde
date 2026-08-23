@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:conecta_arcoverde}?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=America/Recife&useSSL=false&allowPublicKeyRetrieval=true}
-    username: ${DB_USER:root}
-    password: ${DB_PASSWORD:}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=America/Recife&useSSL=true&requireSSL=true&ssl-mode=REQUIRED
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
+      maximum-pool-size: 5
+      minimum-idle: 1
       connection-timeout: 30000
 
   jpa:
@@ -19,23 +19,8 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
-  mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USER:email@teste.com}
-    password: ${MAIL_PASS:senha}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-  jackson:
-    time-zone: America/Recife
-
 jwt:
-  secret: ${JWT_SECRET:dW1hQ2hhdmVTdXBlclNlY3JldGFFQ29tcGxleGFQYXJhRGVzZW52b2x2aW1lbnRvTG9jYWxRdWVEZXZlU2VyVHJvY2FkYUVtUHJvZHVjYW8xMjM0NTY=}
+  secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:86400000}
 
 server:
@@ -46,5 +31,3 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: method
