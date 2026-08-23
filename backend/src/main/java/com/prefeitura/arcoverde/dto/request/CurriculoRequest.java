@@ -1,6 +1,8 @@
 package com.prefeitura.arcoverde.dto.request;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ public record CurriculoRequest(
         @Valid List<ExperienciaRequest> experiencias,
         @Valid List<FormacaoRequest> formacoes,
         @Valid List<CursoLivreRequest> cursosLivres,
-        List<Long> areasInteresseIds
+        @NotEmpty(message = "Selecione pelo menos uma área de interesse") List<Long> areasInteresseIds
 ) {
     public CurriculoRequest {
         if (experiencias == null) experiencias = new ArrayList<>();

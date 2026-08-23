@@ -1,5 +1,6 @@
 package com.prefeitura.arcoverde.controller;
 
+import com.prefeitura.arcoverde.dto.request.ContatoCandidatoRequest;
 import com.prefeitura.arcoverde.dto.request.CurriculoRequest;
 import com.prefeitura.arcoverde.dto.response.CurriculoResponse;
 import com.prefeitura.arcoverde.service.CurriculoService;
@@ -35,6 +36,12 @@ public class CurriculoController {
             @Valid @RequestBody CurriculoRequest request,
             HttpServletRequest httpRequest) {
         return ResponseEntity.ok(curriculoService.salvarMeuCurriculo(request, httpRequest));
+    }
+
+    @PutMapping("/candidato/contato")
+    public ResponseEntity<Void> atualizarContato(@Valid @RequestBody ContatoCandidatoRequest request) {
+        curriculoService.atualizarMeuContato(request);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/candidato/curriculo/submeter")

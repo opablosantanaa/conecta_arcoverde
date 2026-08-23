@@ -1,6 +1,7 @@
 package com.prefeitura.arcoverde.service;
 
 import com.prefeitura.arcoverde.dto.request.CursoLivreRequest;
+import com.prefeitura.arcoverde.dto.request.ContatoCandidatoRequest;
 import com.prefeitura.arcoverde.dto.request.CurriculoRequest;
 import com.prefeitura.arcoverde.dto.request.ExperienciaRequest;
 import com.prefeitura.arcoverde.dto.request.FormacaoRequest;
@@ -98,6 +99,22 @@ public class CurriculoService {
     }
 
     @Transactional
+    public void atualizarMeuContato(ContatoCandidatoRequest request) {
+        Long usuarioId = usuarioAtualId();
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        String email = request.email().trim().toLowerCase();
+        if (Boolean.TRUE.equals(usuarioRepository.existsByEmailAndIdNot(email, usuarioId))) {
+            throw new BusinessException("Este e-mail já está em uso");
+        }
+
+        usuario.setEmail(email);
+        usuario.setTelefone(request.telefone().trim());
+        usuarioRepository.save(usuario);
+    }
+
+    @Transactional
     public CurriculoResponse submeterParaValidacao(HttpServletRequest httpRequest) {
         Long usuarioId = usuarioAtualId();
         Curriculo curriculo = curriculoRepository.findByCandidatoUsuarioId(usuarioId)
@@ -106,6 +123,8 @@ public class CurriculoService {
         if (curriculo.getEstado() == Curriculo.EstadoCurriculo.VALIDADO) {
             throw new BusinessException("Currículo já está validado");
         }
+
+        validarDadosParaSubmissao(curriculo, usuarioId);
 
         curriculo.setEstado(Curriculo.EstadoCurriculo.PENDENTE_VALIDACAO);
         curriculo.setMotivoRejeicao(null);
@@ -251,5 +270,31 @@ public class CurriculoService {
             return u.getId();
         }
         throw new BusinessException("Usuário não autenticado");
+    }
+
+    private void validarDadosParaSubmissao(Curriculo curriculo, Long usuarioId) {
+        List<String> pendencias = new ArrayList<>();
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        if (curriculo.getObjetivo() == null || curriculo.getObjetivo().isBlank()) {
+            pendencias.add("objetivo profissional");
+        }
+        if (curriculo.getResumoProfissional() == null || curriculo.getResumoProfissional().isBlank()) {
+            pendencias.add("resumo profissional");
+        }
+        if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
+            pendencias.add("e-mail");
+        }
+        if (usuario.getTelefone() == null || usuario.getTelefone().isBlank()) {
+            pendencias.add("telefone");
+        }
+        if (areaInteresseRepository.findByCandidatoId(curriculo.getCandidato().getId()).isEmpty()) {
+            pendencias.add("ao menos uma área de interesse");
+        }
+
+        if (!pendencias.isEmpty()) {
+            throw new BusinessException("Para enviar para validação, preencha: " + String.join(", ", pendencias));
+        }
     }
 }

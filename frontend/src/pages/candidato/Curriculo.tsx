@@ -30,6 +30,11 @@ interface CurriculoData {
   areasInteresseIds: number[];
 }
 
+interface ContatoData {
+  email: string;
+  telefone: string;
+}
+
 const paraDataLocal = (valor: string) => {
   if (!valor) return null;
   return /^\d{4}-\d{2}$/.test(valor) ? `${valor}-01` : valor;
@@ -39,17 +44,30 @@ const paraCampoMes = (valor?: string | null) => valor ? valor.slice(0, 7) : '';
 
 const prepararCurriculoParaEnvio = (curriculo: CurriculoData) => ({
   ...curriculo,
-  experiencias: curriculo.experiencias.map(({ dataInicio, dataFim, ...experiencia }) => ({
+  experiencias: curriculo.experiencias
+    .filter(experiencia => Boolean(
+      experiencia.empresa.trim() || experiencia.cargo.trim() || experiencia.descricao.trim()
+      || experiencia.dataInicio || experiencia.dataFim
+    ))
+    .map(({ dataInicio, dataFim, ...experiencia }) => ({
     ...experiencia,
     dataInicio: paraDataLocal(dataInicio),
     dataFim: paraDataLocal(dataFim),
   })),
-  formacoes: curriculo.formacoes.map(({ dataInicio, dataFim, ...formacao }) => ({
+  formacoes: curriculo.formacoes
+    .filter(formacao => Boolean(
+      formacao.instituicao.trim() || formacao.curso.trim() || formacao.dataInicio || formacao.dataFim
+    ))
+    .map(({ dataInicio, dataFim, ...formacao }) => ({
     ...formacao,
     dataInicio: paraDataLocal(dataInicio),
     dataFim: paraDataLocal(dataFim),
   })),
-  cursosLivres: curriculo.cursosLivres.map(curso => ({
+  cursosLivres: curriculo.cursosLivres
+    .filter(curso => Boolean(
+      curso.nome.trim() || curso.instituicao.trim() || curso.cargaHoraria !== '' || curso.anoConclusao !== ''
+    ))
+    .map(curso => ({
     ...curso,
     cargaHoraria: curso.cargaHoraria === '' ? null : curso.cargaHoraria,
     anoConclusao: curso.anoConclusao === '' ? null : curso.anoConclusao,
@@ -78,6 +96,7 @@ export default function Curriculo() {
     cursosLivres: [],
     areasInteresseIds: [],
   });
+  const [contato, setContato] = useState<ContatoData>({ email: '', telefone: '' });
   const [estado, setEstado] = useState<string>('RASCUNHO');
   const [motivoRejeicao, setMotivoRejeicao] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
@@ -88,7 +107,7 @@ export default function Curriculo() {
     queryFn: async () => (await api.get('/areas')).data,
   });
 
-  const { isLoading } = useQuery({
+  const { isLoading: carregandoCurriculo } = useQuery({
     queryKey: ['meu-curriculo'],
     queryFn: async () => {
       try {
@@ -123,6 +142,23 @@ export default function Curriculo() {
     },
   });
 
+  const { isLoading: carregandoContato } = useQuery({
+    queryKey: ['meu-contato'],
+    queryFn: async () => {
+      const { data: usuario } = await api.get('/auth/me');
+      setContato({ email: usuario.email || '', telefone: usuario.telefone || '' });
+      return usuario;
+    },
+  });
+
+  const salvarContatoMutation = useMutation({
+    mutationFn: () => api.put('/candidato/contato', contato),
+    onError: (error: any) => {
+      setSuccessMsg('');
+      setErrorMsg(error.response?.data?.message || 'Não foi possível salvar os dados de contato.');
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: () => api.put('/candidato/curriculo', prepararCurriculoParaEnvio(data)),
     onSuccess: () => {
@@ -153,7 +189,21 @@ export default function Curriculo() {
   });
 
   const salvarEEnviarParaValidacao = async () => {
+    const pendencias = [];
+    if (!data.objetivo.trim()) pendencias.push('objetivo profissional');
+    if (!contato.email.trim()) pendencias.push('e-mail');
+    if (!contato.telefone.trim()) pendencias.push('telefone');
+    if (!data.resumoProfissional.trim()) pendencias.push('resumo profissional');
+    if (data.areasInteresseIds.length === 0) pendencias.push('ao menos uma área de interesse');
+
+    if (pendencias.length > 0) {
+      setSuccessMsg('');
+      setErrorMsg(`Para enviar para validação, preencha: ${pendencias.join(', ')}.`);
+      return;
+    }
+
     try {
+      await salvarContatoMutation.mutateAsync();
       await saveMutation.mutateAsync();
       await submitMutation.mutateAsync();
     } catch {
@@ -198,7 +248,7 @@ export default function Curriculo() {
       : [...d.areasInteresseIds, id],
   }));
 
-  if (isLoading) {
+  if (carregandoCurriculo || carregandoContato) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-48" />
@@ -253,13 +303,31 @@ export default function Curriculo() {
         </Card>
       )}
 
+      <Card padding="lg">
+        <h2 className="font-semibold text-content dark:text-content-dark mb-4">Dados de contato</h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Input
+            label="E-mail *"
+            type="email"
+            value={contato.email}
+            onChange={e => setContato(c => ({ ...c, email: e.target.value }))}
+          />
+          <Input
+            label="Telefone *"
+            type="tel"
+            value={contato.telefone}
+            onChange={e => setContato(c => ({ ...c, telefone: e.target.value }))}
+          />
+        </div>
+      </Card>
+
       {/* Objetivo e resumo */}
       <Card padding="lg">
         <h2 className="font-semibold text-content dark:text-content-dark mb-4">Informações profissionais</h2>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-content dark:text-content-dark mb-1.5">
-              Objetivo profissional
+              Objetivo profissional *
             </label>
             <textarea
               value={data.objetivo}
@@ -272,7 +340,7 @@ export default function Curriculo() {
           </div>
           <div>
             <label className="block text-sm font-medium text-content dark:text-content-dark mb-1.5">
-              Resumo profissional
+              Resumo profissional *
             </label>
             <textarea
               value={data.resumoProfissional}
@@ -456,7 +524,7 @@ export default function Curriculo() {
 
       {/* Áreas de interesse */}
       <Card padding="lg">
-        <h2 className="font-semibold text-content dark:text-content-dark mb-4">Áreas de interesse</h2>
+        <h2 className="font-semibold text-content dark:text-content-dark mb-4">Áreas de interesse *</h2>
         <p className="text-sm text-content-secondary dark:text-content-secondary mb-4">
           Selecione as áreas em que você tem interesse em trabalhar. Isso nos ajuda a recomendar vagas adequadas ao seu perfil.
         </p>
@@ -494,13 +562,13 @@ export default function Curriculo() {
               variant="outline"
               onClick={() => saveMutation.mutate()}
               isLoading={saveMutation.isPending}
-              disabled={submitMutation.isPending}
+              disabled={submitMutation.isPending || salvarContatoMutation.isPending}
             >
               <Save className="w-4 h-4" /> Salvar rascunho
             </Button>
             <Button
               onClick={salvarEEnviarParaValidacao}
-              isLoading={submitMutation.isPending || saveMutation.isPending}
+              isLoading={submitMutation.isPending || saveMutation.isPending || salvarContatoMutation.isPending}
               disabled={estado === 'VALIDADO' || estado === 'PENDENTE_VALIDACAO'}
             >
               <Send className="w-4 h-4" /> Enviar para validação
