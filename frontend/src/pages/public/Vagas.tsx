@@ -23,7 +23,7 @@ function formatSalary(min: number | null, max: number | null) {
   if (!min && !max) return 'A combinar';
   const fmt = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
   if (min && max) return `${fmt(min)} - ${fmt(max)}`;
-  return min ? `A partir de ${fmt(min)}` : `AtÃ© ${fmt(max)}`;
+  return min ? `A partir de ${fmt(min)}` : `Até ${fmt(max)}`;
 }
 
 function formatDate(dateStr: string) {
