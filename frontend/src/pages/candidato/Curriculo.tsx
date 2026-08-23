@@ -30,6 +30,32 @@ interface CurriculoData {
   areasInteresseIds: number[];
 }
 
+const paraDataLocal = (valor: string) => {
+  if (!valor) return null;
+  return /^\d{4}-\d{2}$/.test(valor) ? `${valor}-01` : valor;
+};
+
+const paraCampoMes = (valor?: string | null) => valor ? valor.slice(0, 7) : '';
+
+const prepararCurriculoParaEnvio = (curriculo: CurriculoData) => ({
+  ...curriculo,
+  experiencias: curriculo.experiencias.map(({ dataInicio, dataFim, ...experiencia }) => ({
+    ...experiencia,
+    dataInicio: paraDataLocal(dataInicio),
+    dataFim: paraDataLocal(dataFim),
+  })),
+  formacoes: curriculo.formacoes.map(({ dataInicio, dataFim, ...formacao }) => ({
+    ...formacao,
+    dataInicio: paraDataLocal(dataInicio),
+    dataFim: paraDataLocal(dataFim),
+  })),
+  cursosLivres: curriculo.cursosLivres.map(curso => ({
+    ...curso,
+    cargaHoraria: curso.cargaHoraria === '' ? null : curso.cargaHoraria,
+    anoConclusao: curso.anoConclusao === '' ? null : curso.anoConclusao,
+  })),
+});
+
 const niveisFormacao = [
   'FUNDAMENTAL', 'MEDIO', 'TECNICO', 'SUPERIOR',
   'POS_GRADUACAO', 'MESTRADO', 'DOUTORADO'
@@ -71,9 +97,21 @@ export default function Curriculo() {
         setData({
           objetivo: c.objetivo || '',
           resumoProfissional: c.resumoProfissional || '',
-          experiencias: c.experiencias || [],
-          formacoes: c.formacoes || [],
-          cursosLivres: c.cursosLivres || [],
+          experiencias: (c.experiencias || []).map((exp: Experiencia) => ({
+            ...exp,
+            dataInicio: paraCampoMes(exp.dataInicio),
+            dataFim: paraCampoMes(exp.dataFim),
+          })),
+          formacoes: (c.formacoes || []).map((formacao: Formacao) => ({
+            ...formacao,
+            dataInicio: paraCampoMes(formacao.dataInicio),
+            dataFim: paraCampoMes(formacao.dataFim),
+          })),
+          cursosLivres: (c.cursosLivres || []).map((curso: CursoLivre) => ({
+            ...curso,
+            cargaHoraria: curso.cargaHoraria ?? '',
+            anoConclusao: curso.anoConclusao ?? '',
+          })),
           areasInteresseIds: (c.areasInteresse || []).map((a: any) => a.id),
         });
         setEstado(c.estado || 'RASCUNHO');
@@ -86,7 +124,7 @@ export default function Curriculo() {
   });
 
   const saveMutation = useMutation({
-    mutationFn: () => api.put('/candidato/curriculo', data),
+    mutationFn: () => api.put('/candidato/curriculo', prepararCurriculoParaEnvio(data)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['meu-curriculo'] });
       setErrorMsg('');
