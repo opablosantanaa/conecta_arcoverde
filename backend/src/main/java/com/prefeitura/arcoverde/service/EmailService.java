@@ -21,18 +21,17 @@ public class EmailService {
             @Value("${spring.mail.username:noreply@conecta.arcoverde}") String fromEmail) {
         this.mailSender = mailSender;
         this.fromEmail = fromEmail;
-        
+
         if (mailSender == null) {
-            logger.warn("JavaMailSender não configurado. Envio de e-mails está DESABILITADO.");
-            logger.warn("Para habilitar, configure as variáveis: spring.mail.host, spring.mail.port, spring.mail.username, spring.mail.password");
+            logger.warn("JavaMailSender NAO configurado. Envio de e-mails DESABILITADO.");
         } else {
-            logger.info("JavaMailSender configurado com sucesso. Envio de e-mails HABILITADO.");
+            logger.info("JavaMailSender configurado. Envio de e-mails HABILITADO.");
         }
     }
 
     public void enviarEmail(String para, String assunto, String corpo) {
         if (mailSender == null) {
-            logger.warn("Tentativa de enviar e-mail para {} com assunto '{}', mas JavaMailSender não está configurado. E-mail NÃO enviado.", para, assunto);
+            logger.warn("Tentativa de enviar e-mail para {} ignorada (SMTP nao configurado)", para);
             return;
         }
 
@@ -42,52 +41,28 @@ public class EmailService {
             message.setTo(para);
             message.setSubject(assunto);
             message.setText(corpo);
-            
             mailSender.send(message);
-            logger.info("E-mail enviado com sucesso para: {}", para);
+            logger.info("E-mail enviado para: {}", para);
         } catch (Exception e) {
-            logger.error("Erro ao enviar e-mail para {}: {}", para, e.getMessage(), e);
+            logger.error("Erro ao enviar e-mail para {}: {}", para, e.getMessage());
         }
     }
 
     public void enviarEmailRecuperacaoSenha(String para, String token) {
-        String assunto = "Recuperação de Senha - Conecta Arcoverde";
+        String assunto = "Recuperacao de Senha - Conecta Arcoverde";
         String corpo = String.format(
-            "Olá!\n\n" +
-            "Você solicitou a recuperação de senha na plataforma Conecta Arcoverde.\n\n" +
-            "Use o seguinte token para redefinir sua senha:\n\n" +
-            "%s\n\n" +
-            "Este token expira em 1 hora.\n\n" +
-            "Se você não solicitou esta recuperação, ignore este e-mail.\n\n" +
-            "Atenciosamente,\n" +
-            "Equipe Conecta Arcoverde\n" +
-            "Prefeitura Municipal de Arcoverde-PE",
+            "Ola!\n\nVoce solicitou recuperacao de senha.\n\nToken: %s\n\nEste token expira em 1 hora.\n\nEquipe Conecta Arcoverde",
             token
         );
-        
         enviarEmail(para, assunto, corpo);
     }
 
     public void enviarEmailBoasVindas(String para, String nome) {
         String assunto = "Bem-vindo ao Conecta Arcoverde!";
         String corpo = String.format(
-            "Olá, %s!\n\n" +
-            "Seja bem-vindo à plataforma Conecta Arcoverde.\n\n" +
-            "Agora você pode:\n" +
-            "- Criar e validar seu currículo\n" +
-            "- Candidatar-se a vagas\n" +
-            "- Inscrever-se em cursos de capacitação\n\n" +
-            "Acesse: https://conecta-arco.vercel.app\n\n" +
-            "Atenciosamente,\n" +
-            "Equipe Conecta Arcoverde\n" +
-            "Prefeitura Municipal de Arcoverde-PE",
+            "Ola, %s!\n\nBem-vindo ao Conecta Arcoverde.\n\nAcesse: https://conecta-arco.vercel.app\n\nEquipe Conecta Arcoverde",
             nome
         );
-        
         enviarEmail(para, assunto, corpo);
-    }
-
-    public boolean isMailConfigurado() {
-        return mailSender != null;
     }
 }
