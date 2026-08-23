@@ -1,11 +1,14 @@
 package com.prefeitura.arcoverde.controller;
 
+import com.prefeitura.arcoverde.dto.request.EmpresaRequest;
 import com.prefeitura.arcoverde.dto.response.EmpresaResponse;
 import com.prefeitura.arcoverde.service.EmpresaService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,5 +37,10 @@ public class EmpresaController {
     @GetMapping("/{id}")
     public EmpresaResponse buscarPorId(@PathVariable Long id) {
         return empresaService.buscarPorId(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<EmpresaResponse> criar(@Valid @RequestBody EmpresaRequest request) {
+        return ResponseEntity.ok(empresaService.criar(request));
     }
 }

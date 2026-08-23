@@ -23,6 +23,7 @@ export default function GerenciarVagas() {
   const queryClient = useQueryClient();
   const [filtroEstado, setFiltroEstado] = useState('');
   const [modalNovaVaga, setModalNovaVaga] = useState(false);
+  const [modalNovaEmpresa, setModalNovaEmpresa] = useState(false);
   const [modalModerar, setModalModerar] = useState<{ id: number; aprovar: boolean } | null>(null);
   const [motivoRejeicao, setMotivoRejeicao] = useState('');
 
@@ -31,6 +32,11 @@ export default function GerenciarVagas() {
     titulo: '', descricao: '', empresaId: '', areaId: '',
     requisitos: '', beneficios: '', salarioMinimo: '', salarioMaximo: '',
     tipoContrato: 'CLT', quantidadeVagas: '1', cidade: 'Arcoverde', estado: 'PE',
+  });
+
+  // Formulário de nova empresa
+  const [formEmpresa, setFormEmpresa] = useState({
+    nomeFantasia: '', razaoSocial: '', cnpj: '', emailContato: '', telefone: '', endereco: '', ocultarNomePublicamente: false,
   });
 
   const { data: empresas } = useQuery({
@@ -46,7 +52,7 @@ export default function GerenciarVagas() {
   const { data, isLoading } = useQuery({
     queryKey: ['aca-vagas', filtroEstado],
     queryFn: async () => {
-      const url = filtroEstado ? `/aca/vagas/estado/${filtroEstado}?size=100` : '/aca/vagas?size=100';
+      const url = filtroEstado ? /aca/vagas/estado/?size=100 : '/aca/vagas?size=100';
       return (await api.get(url)).data;
     },
   });
@@ -67,8 +73,19 @@ export default function GerenciarVagas() {
     },
   });
 
+  const criarEmpresaMutation = useMutation({
+    mutationFn: () => api.post('/empresas', formEmpresa),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['empresas'] });
+      setModalNovaEmpresa(false);
+      setFormEmpresa({ nomeFantasia: '', razaoSocial: '', cnpj: '', emailContato: '', telefone: '', endereco: '', ocultarNomePublicamente: false });
+      // Auto-selecionar a empresa recém-criada
+      setFormVaga(f => ({ ...f, empresaId: String(response.data.id) }));
+    },
+  });
+
   const moderarMutation = useMutation({
-    mutationFn: () => api.post(`/aca/vagas/${modalModerar?.id}/moderar`, {
+    mutationFn: () => api.post(/aca/vagas//moderar, {
       aprovar: modalModerar?.aprovar,
       motivo: modalModerar?.aprovar ? null : motivoRejeicao,
     }),
@@ -80,17 +97,17 @@ export default function GerenciarVagas() {
   });
 
   const publicarMutation = useMutation({
-    mutationFn: (id: number) => api.post(`/aca/vagas/${id}/publicar`),
+    mutationFn: (id: number) => api.post(/aca/vagas//publicar),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['aca-vagas'] }),
   });
 
   const encerrarMutation = useMutation({
-    mutationFn: (id: number) => api.post(`/aca/vagas/${id}/encerrar`),
+    mutationFn: (id: number) => api.post(/aca/vagas//encerrar),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['aca-vagas'] }),
   });
 
   const cancelarMutation = useMutation({
-    mutationFn: (id: number) => api.post(`/aca/vagas/${id}/cancelar`),
+    mutationFn: (id: number) => api.post(/aca/vagas//cancelar),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['aca-vagas'] }),
   });
 
@@ -113,12 +130,12 @@ export default function GerenciarVagas() {
       {/* Filtros */}
       <div className="flex flex-wrap gap-2">
         <button onClick={() => setFiltroEstado('')}
-          className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${!filtroEstado ? 'bg-primary-500 text-white border-primary-500' : 'bg-surface dark:bg-surface-dark-secondary text-content-secondary border-border dark:border-border-dark hover:border-primary-500'}`}>
+          className={px-4 py-2 rounded-full text-sm font-medium border transition-all }>
           Todas
         </button>
         {Object.entries(statusConfig).map(([key, cfg]) => (
           <button key={key} onClick={() => setFiltroEstado(key)}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${filtroEstado === key ? 'bg-primary-500 text-white border-primary-500' : 'bg-surface dark:bg-surface-dark-secondary text-content-secondary border-border dark:border-border-dark hover:border-primary-500'}`}>
+            className={px-4 py-2 rounded-full text-sm font-medium border transition-all }>
             {cfg.label}
           </button>
         ))}
@@ -195,11 +212,16 @@ export default function GerenciarVagas() {
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-content dark:text-content-dark mb-1.5">Empresa *</label>
-                <select value={formVaga.empresaId} onChange={e => setFormVaga(f => ({ ...f, empresaId: e.target.value }))}
-                  className="w-full rounded-btn border border-border dark:border-border-dark bg-surface dark:bg-surface-dark-secondary px-3 py-2.5 text-sm focus:outline-none focus:border-primary-500">
-                  <option value="">Selecione...</option>
-                  {(empresas || []).map((e: any) => <option key={e.id} value={e.id}>{e.nomeFantasia}</option>)}
-                </select>
+                <div className="flex gap-2">
+                  <select value={formVaga.empresaId} onChange={e => setFormVaga(f => ({ ...f, empresaId: e.target.value }))}
+                    className="flex-1 rounded-btn border border-border dark:border-border-dark bg-surface dark:bg-surface-dark-secondary px-3 py-2.5 text-sm focus:outline-none focus:border-primary-500">
+                    <option value="">Selecione...</option>
+                    {(empresas || []).map((e: any) => <option key={e.id} value={e.id}>{e.nomeFantasia}</option>)}
+                  </select>
+                  <Button size="sm" variant="outline" onClick={() => setModalNovaEmpresa(true)}>
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-content dark:text-content-dark mb-1.5">Área *</label>
@@ -256,6 +278,42 @@ export default function GerenciarVagas() {
                 Cadastrar Vaga
               </Button>
               <Button variant="outline" onClick={() => setModalNovaVaga(false)}>Cancelar</Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Modal Nova Empresa */}
+      {modalNovaEmpresa && (
+        <Modal title="Cadastrar Nova Empresa" onClose={() => setModalNovaEmpresa(false)}>
+          <div className="space-y-4">
+            <Input label="Nome fantasia *" value={formEmpresa.nomeFantasia} onChange={e => setFormEmpresa(f => ({ ...f, nomeFantasia: e.target.value }))} placeholder="Ex: Comércio Arcoverde LTDA" />
+            <Input label="Razão social" value={formEmpresa.razaoSocial} onChange={e => setFormEmpresa(f => ({ ...f, razaoSocial: e.target.value }))} placeholder="Ex: Comércio Arcoverde LTDA" />
+            <Input label="CNPJ" value={formEmpresa.cnpj} onChange={e => setFormEmpresa(f => ({ ...f, cnpj: e.target.value }))} placeholder="00.000.000/0000-00" />
+            <div className="grid md:grid-cols-2 gap-4">
+              <Input label="E-mail de contato" type="email" value={formEmpresa.emailContato} onChange={e => setFormEmpresa(f => ({ ...f, emailContato: e.target.value }))} placeholder="contato@empresa.com" />
+              <Input label="Telefone" value={formEmpresa.telefone} onChange={e => setFormEmpresa(f => ({ ...f, telefone: e.target.value }))} placeholder="(87) 0000-0000" />
+            </div>
+            <Input label="Endereço" value={formEmpresa.endereco} onChange={e => setFormEmpresa(f => ({ ...f, endereco: e.target.value }))} placeholder="Rua, número, bairro" />
+            
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="ocultarNome" checked={formEmpresa.ocultarNomePublicamente} onChange={e => setFormEmpresa(f => ({ ...f, ocultarNomePublicamente: e.target.checked }))}
+                className="rounded border-border dark:border-border-dark" />
+              <label htmlFor="ocultarNome" className="text-sm text-content dark:text-content-dark">
+                Ocultar nome da empresa publicamente nas vagas
+              </label>
+            </div>
+
+            <div className="bg-info/10 p-3 rounded-btn text-sm text-info">
+              <strong>Nota:</strong> A empresa será criada com um usuário temporário. As credenciais de acesso podem ser definidas posteriormente pela administração.
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button onClick={() => criarEmpresaMutation.mutate()} isLoading={criarEmpresaMutation.isPending}
+                disabled={!formEmpresa.nomeFantasia}>
+                Cadastrar Empresa
+              </Button>
+              <Button variant="outline" onClick={() => setModalNovaEmpresa(false)}>Cancelar</Button>
             </div>
           </div>
         </Modal>
