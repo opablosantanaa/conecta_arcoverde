@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react';
-import api from '@/services/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Briefcase, MapPin, DollarSign, Users } from 'lucide-react';
+import api from '../services/api';
 
 interface Vaga {
   id: number;
   titulo: string;
-  descricao: string;
-  localizacao?: string;
-  salarioMinimo?: number;
-  salarioMaximo?: number;
-  numeroVagas?: number;
-  tipoContrato?: string;
-  empresa?: { nome: string };
+  empresa: { nome: string };
+  localizacao: string;
+  salarioMinimo: number;
+  salarioMaximo: number;
+  tipoContrato: string;
 }
 
 export default function Vagas() {
@@ -25,10 +20,10 @@ export default function Vagas() {
     const fetchVagas = async () => {
       try {
         const response = await api.get('/vagas');
-        setVagas(response.data);
+        setVagas(response.data || []);
       } catch (err) {
         console.error('Erro ao buscar vagas:', err);
-        setError('Não foi possível carregar as vagas no momento.');
+        setError('Não foi possível carregar as vagas. Tente novamente mais tarde.');
       } finally {
         setLoading(false);
       }
@@ -39,73 +34,54 @@ export default function Vagas() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center p-8 bg-red-50 rounded-lg mt-8">
-        <p className="text-red-600 font-medium">{error}</p>
-        <p className="text-sm text-gray-500 mt-2">Verifique se o backend está rodando corretamente.</p>
+      <div className="p-4 bg-red-100 text-red-700 rounded-lg text-center">
+        {error}
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900">Vagas Disponíveis</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Vagas Disponíveis</h1>
       
       {vagas.length === 0 ? (
-        <div className="text-center p-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-          <Briefcase className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">Nenhuma vaga encontrada</h3>
-          <p className="text-gray-500 mt-2">Ainda não há vagas cadastradas no sistema.</p>
+        <div className="text-center py-10 text-gray-500">
+          Nenhuma vaga encontrada no momento.
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {vagas.map((vaga) => (
-            <Card key={vaga.id} className="hover:shadow-lg transition-shadow duration-200">
-              <CardHeader>
-                <CardTitle className="text-xl text-primary">{vaga.titulo}</CardTitle>
-                {vaga.empresa && (
-                  <p className="text-sm text-gray-600 flex items-center gap-1">
-                    <Users size={14} /> {vaga.empresa.nome}
-                  </p>
+            <div key={vaga.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-100">
+              <h2 className="text-xl font-semibold text-blue-600 mb-2">{vaga.titulo}</h2>
+              <p className="text-gray-700 font-medium mb-1">{vaga.empresa?.nome || 'Empresa não informada'}</p>
+              <p className="text-gray-500 text-sm mb-4 flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                {vaga.localizacao || 'Local não informado'}
+              </p>
+              
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                  {vaga.tipoContrato || 'Indefinido'}
+                </span>
+                {(vaga.salarioMinimo || vaga.salarioMaximo) && (
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
+                    R$ {vaga.salarioMinimo?.toFixed(2)} - R$ {vaga.salarioMaximo?.toFixed(2)}
+                  </span>
                 )}
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-gray-700 line-clamp-3">{vaga.descricao}</p>
-                
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {vaga.localizacao && (
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <MapPin size={12} /> {vaga.localizacao}
-                    </Badge>
-                  )}
-                  {(vaga.salarioMinimo || vaga.salarioMaximo) && (
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <DollarSign size={12} />
-                      {vaga.salarioMinimo?.toFixed(2)} - {vaga.salarioMaximo?.toFixed(2)}
-                    </Badge>
-                  )}
-                  {vaga.numeroVagas && (
-                    <Badge variant="secondary">
-                      {vaga.numeroVagas} vaga(s)
-                    </Badge>
-                  )}
-                  {vaga.tipoContrato && (
-                    <Badge variant="default">{vaga.tipoContrato}</Badge>
-                  )}
-                </div>
-                
-                <button className="w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 py-2 rounded-md font-medium transition-colors">
-                  Candidatar-se
-                </button>
-              </CardContent>
-            </Card>
+              </div>
+
+              <button className="w-full mt-2 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                Candidatar-se
+              </button>
+            </div>
           ))}
         </div>
       )}

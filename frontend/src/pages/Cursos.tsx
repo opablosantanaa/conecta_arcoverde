@@ -1,18 +1,14 @@
 import { useEffect, useState } from 'react';
-import api from '@/services/api';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { BookOpen, Calendar, Clock, User } from 'lucide-react';
+import api from '../services/api';
 
 interface Curso {
   id: number;
   titulo: string;
   descricao: string;
-  cargaHoraria?: number;
-  dataInicio?: string;
-  dataFim?: string;
-  instrutor?: string;
-  area?: { nome: string };
+  cargaHoraria: number;
+  instrutor: string;
+  dataInicio: string;
+  dataFim: string;
 }
 
 export default function Cursos() {
@@ -24,10 +20,10 @@ export default function Cursos() {
     const fetchCursos = async () => {
       try {
         const response = await api.get('/cursos');
-        setCursos(response.data);
+        setCursos(response.data || []);
       } catch (err) {
         console.error('Erro ao buscar cursos:', err);
-        setError('Não foi possível carregar os cursos no momento.');
+        setError('Não foi possível carregar os cursos. Tente novamente mais tarde.');
       } finally {
         setLoading(false);
       }
@@ -38,75 +34,52 @@ export default function Cursos() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center p-8 bg-red-50 rounded-lg mt-8">
-        <p className="text-red-600 font-medium">{error}</p>
-        <p className="text-sm text-gray-500 mt-2">Verifique a conexão com o backend.</p>
+      <div className="p-4 bg-red-100 text-red-700 rounded-lg text-center">
+        {error}
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900">Cursos Disponíveis</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Cursos Disponíveis</h1>
       
       {cursos.length === 0 ? (
-        <div className="text-center p-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-          <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">Nenhum curso encontrado</h3>
-          <p className="text-gray-500 mt-2">Ainda não há cursos cadastrados no sistema.</p>
+        <div className="text-center py-10 text-gray-500">
+          Nenhum curso encontrado no momento.
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cursos.map((curso) => (
-            <Card key={curso.id} className="hover:shadow-lg transition-shadow duration-200 flex flex-col">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-xl text-primary">{curso.titulo}</CardTitle>
-                  {curso.area && (
-                    <Badge variant="secondary">{curso.area.nome}</Badge>
-                  )}
+            <div key={curso.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-100 flex flex-col">
+              <h2 className="text-xl font-semibold text-blue-600 mb-2">{curso.titulo}</h2>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-3">{curso.descricao}</p>
+              
+              <div className="mt-auto space-y-2">
+                <div className="flex items-center text-sm text-gray-500">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  {curso.cargaHoraria} horas
                 </div>
                 {curso.instrutor && (
-                  <CardDescription className="flex items-center gap-1 mt-2">
-                    <User size={14} /> {curso.instrutor}
-                  </CardDescription>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    {curso.instrutor}
+                  </div>
                 )}
-              </CardHeader>
-              <CardContent className="flex-grow space-y-4">
-                <p className="text-gray-700 line-clamp-3">{curso.descricao}</p>
-                
-                <div className="space-y-2 pt-2 border-t border-gray-100">
-                  {curso.cargaHoraria && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Clock size={16} />
-                      <span>{curso.cargaHoraria} horas</span>
-                    </div>
-                  )}
-                  {(curso.dataInicio || curso.dataFim) && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar size={16} />
-                      <span>
-                        {curso.dataInicio ? new Date(curso.dataInicio).toLocaleDateString('pt-BR') : 'A definir'}
-                        {' - '}
-                        {curso.dataFim ? new Date(curso.dataFim).toLocaleDateString('pt-BR') : 'A definir'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                
-                <button className="w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 py-2 rounded-md font-medium transition-colors">
-                  Inscrever-se
-                </button>
-              </CardContent>
-            </Card>
+              </div>
+
+              <button className="w-full mt-4 bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition-colors font-medium">
+                Inscrever-se
+              </button>
+            </div>
           ))}
         </div>
       )}
