@@ -25,24 +25,25 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        upsertUsuario("Administrador", "admin@conecta.arcoverde", "Admin@123", Perfil.ADMIN);
-        upsertUsuario("Prefeitura", "prefeitura@conecta.arcoverde", "Prefeitura@123", Perfil.PREFEITURA);
-        upsertUsuario("ACA", "aca@conecta.arcoverde", "Aca@1234", Perfil.ACA);
-        upsertUsuario("Empresa Demo", "empresa@conecta.arcoverde", "Empresa@123", Perfil.EMPRESA);
+        criarUsuarioSeNaoExistir("Administrador", "admin@conecta.arcoverde", "Admin@123", Perfil.ADMIN);
+        criarUsuarioSeNaoExistir("Prefeitura", "prefeitura@conecta.arcoverde", "Prefeitura@123", Perfil.PREFEITURA);
+        criarUsuarioSeNaoExistir("ACA", "aca@conecta.arcoverde", "Aca@1234", Perfil.ACA);
+        criarUsuarioSeNaoExistir("Empresa Demo", "empresa@conecta.arcoverde", "Empresa@123", Perfil.EMPRESA);
     }
 
-    private void upsertUsuario(String nome, String email, String senha, Perfil perfil) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseGet(() -> Usuario.builder()
-                        .email(email)
-                        .build());
+    private void criarUsuarioSeNaoExistir(String nome, String email, String senha, Perfil perfil) {
+        // Verifica se o usuário já existe no banco
+        boolean existe = usuarioRepository.findByEmail(email).isPresent();
 
-        usuario.setNome(nome);
-        usuario.setEmail(email);
-        usuario.setSenhaHash(passwordEncoder.encode(senha));
-        usuario.setPerfil(perfil);
-        usuario.setAtivo(true);
-
-        usuarioRepository.save(usuario);
+        if (!existe) {
+            Usuario usuario = Usuario.builder()
+                    .nome(nome)
+                    .email(email)
+                    .senhaHash(passwordEncoder.encode(senha))
+                    .perfil(perfil)
+                    .ativo(true)
+                    .build();
+            usuarioRepository.save(usuario);
+        }
     }
 }
