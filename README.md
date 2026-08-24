@@ -16,6 +16,27 @@ O **Conecta Arcoverde** é uma plataforma web completa desenvolvida para conecta
 
 ---
 
+## 📦 Módulos e Funcionalidades Detalhadas
+
+Além dos portais básicos, o sistema conta com diversos módulos avançados no backend para garantir transparência, acessibilidade e conformidade com a LGPD:
+
+### 👥 Perfis de Acesso
+- **Candidato:** Portal dedicado para cidadãos de Arcoverde criarem seus currículos, buscarem vagas, candidatarem-se a empregos, inscreverem-se em cursos de capacitação e acompanharem o status de suas candidaturas.
+- **Empresa:** Painel para empresas locais publicarem vagas, gerenciarem as candidaturas recebidas, solicitarem validações e comunicarem-se com candidatos e a ACA.
+- **ACA (Agência de Cidadania e Assistência):** Módulo focado em inclusão digital e assistencial. Permite o cadastro assistido de cidadãos que não possuem acesso à internet e validação de currículos.
+- **Prefeitura:** Visão estratégica com indicadores macro do município, gestão de cursos de capacitação e acompanhamento geral do ecossistema de empregabilidade.
+- **Administrador:** Controle total do sistema, incluindo logs de auditoria, gestão de permissões (ACL) e manutenção de usuários.
+
+### ⚙️ Funcionalidades Transversais (Backend)
+- **Autenticação e Recuperação de Senha:** Fluxo seguro de "Esqueci minha senha" e redefinição via e-mail, com retornos genéricos para evitar *User Enumeration* (em conformidade com a LGPD).
+- **Sistema de Solicitações ACA:** Permite que candidatos solicitem alterações em seus cadastros ou currículos, passando por um fluxo de aprovação e resposta por parte dos agentes da ACA.
+- **Histórico de Comunicação:** Rastreamento de todas as interações e mensagens trocadas entre candidatos, empresas e a plataforma durante os processos seletivos.
+- **Painel de Indicadores:** Dashboard analítico exclusivo para a Prefeitura extrair dados estruturados sobre a geração de emprego e impacto social no município.
+- **Auditoria de Ações:** Logs estruturados de todas as ações críticas de usuários administrativos, garantindo rastreabilidade e segurança.
+- **Cadastro Assistido e Vagas da ACA:** Rotas dedicadas para que agentes da ACA possam cadastrar cidadãos presencialmente e vinculá-los a oportunidades de emprego específicas.
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### Backend
@@ -45,16 +66,6 @@ O **Conecta Arcoverde** é uma plataforma web completa desenvolvida para conecta
 
 ---
 
-## 🚀 Pré-requisitos
-
-Certifique-se de ter as seguintes ferramentas instaladas:
-- [Java JDK 17+](https://adoptium.net/)
-- [Maven 3.9+](https://maven.apache.org/)
-- [Node.js 18+ e npm](https://nodejs.org/)
-- [Docker e Docker Compose](https://www.docker.com/)
-
----
-
 ## ⚙️ Configuração e Execução Local
 
 ### 1. Clonar o Repositório
@@ -72,6 +83,7 @@ Na pasta `backend/`, copie o arquivo de exemplo:
 cd backend
 cp .env.example .env
 ```
+*Nota: Preencha o arquivo `.env` com as credenciais do seu banco de dados local, chaves JWT e configurações do servidor SMTP para envio de e-mails.*
 
 ### 3. Iniciar o Banco de Dados (Docker)
 
@@ -101,78 +113,25 @@ Frontend disponível em `http://localhost:3000`
 
 ## 👤 Usuários Padrão (Seed)
 
-| Perfil | E-mail | Senha | Acesso |
-|---|---|---|---|
-| **ADMIN** | `admin@conecta.arcoverde` | `Admin@123` | Gestão de usuários, permissões e auditoria |
-| **PREFEITURA** | `prefeitura@conecta.arcoverde` | `Prefeitura@123` | Indicadores, cursos e gestão de vagas |
-| **ACA** | `aca@conecta.arcoverde` | `Aca@1234` | Validação de currículos, cadastro assistido |
-| **EMPRESA** | `empresa@conecta.arcoverde` | `Empresa@123` | Publicação de vagas e gestão de candidatos |
+> ⚠️ **Atenção por Segurança:** Para evitar a exposição de credenciais em repositórios públicos e evitar más práticas de segurança, **as senhas dos usuários padrão não são mais listadas neste documento**. 
+> Caso esteja configurando o ambiente de desenvolvimento local, consulte o arquivo `DataSeeder.java` no backend para visualizar as senhas iniciais (que são criptografadas com BCrypt ao rodar o projeto), ou utilize o fluxo de "Esqueci minha senha" na tela de login para redefini-las através do seu e-mail.
 
----
-
-## 🎯 Principais Funcionalidades
-
-### 🌍 Portal Público
-- Busca de vagas e cursos com filtros avançados
-- Visualização de detalhes de vagas
-- Cadastro e login de candidatos
-
-### 👤 Portal do Candidato
-- **Editor de currículo dinâmico** com validação de campos obrigatórios
-- **Submissão para validação** pela ACA/Prefeitura
-- **Acompanhamento de candidaturas** em tempo real
-- Inscrição em cursos livres
-- Notificações de vagas por área de interesse
-
-### 🏢 Portal da Empresa
-- **Gestão de vagas** com **Regra das 12h** (edição direta em até 12h após criação)
-- **Criação de empresas** diretamente no cadastro de vagas
-- Visualização isolada de candidatos por vaga
-- Solicitação de alterações em candidaturas
-
-### 🏛️ Portal ACA/Prefeitura
-- **Moderação de vagas** (aprovar/rejeitar com motivo)
-- **Validação de currículos** de candidatos
-- **Cadastro assistido** (LGPD) para cidadãos sem acesso digital
-- Gestão de cursos livres
-
-### 🔧 Portal Admin
-- CRUD completo de usuários
-- **Matriz de permissões granulares** (RBAC)
-- Logs de auditoria de todas as ações
-
----
-
-## 📖 Documentação da API
-
-Com o backend rodando, acesse:
-- **Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-- **OpenAPI JSON:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
-
----
-
-## 🚀 Deploy em Produção
-
-### Frontend (Vercel)
-- **URL:** [https://conecta-arco.vercel.app/](https://conecta-arco.vercel.app/)
-
-### Backend (Render)
-- Dockerfile configurado para build de produção
-- Health check configurado em `/health`
+| Perfil | E-mail Padrão | Função / Acesso |
+|---|---|---|
+| **ADMIN** | `admin@conecta.arcoverde` | Gestão de usuários, permissões e auditoria do sistema |
+| **PREFEITURA** | `prefeitura@conecta.arcoverde` | Indicadores, cursos de capacitação e gestão estratégica |
+| **ACA** | `aca@conecta.arcoverde` | Validação de currículos, cadastro assistido e análise de solicitações |
+| **EMPRESA** | `empresa@conecta.arcoverde` | Publicação de vagas e gestão de candidatos |
+| **CANDIDATO** | *(Criado via registro)* | Busca de vagas, candidaturas, cursos e perfil profissional |
 
 ---
 
 ## 🔒 Segurança e LGPD
 
 - Senhas armazenadas com hash **BCrypt**
-- Credenciais isoladas em variáveis de ambiente
-- **Logs de auditoria** para rastreamento
-- **Ocultação opcional** de nomes de empresas
-- **Consentimento explícito** no cadastro
-- **Isolamento de dados** entre empresas
-
----
-
-## ✍️ Autoria
-
-Projeto criado por **Pablo Santana** ([@opablosantanaa](https://github.com/opablosantanaa)) em colaboração com a **AESA-CESA** para apresentação à **Prefeitura de Arcoverde**.
+- Credenciais isoladas em variáveis de ambiente (`.env`)
+- **Logs de auditoria** para rastreamento de ações críticas
+- **Ocultação opcional** de nomes de empresas em processos seletivos
+- **Consentimento explícito** no cadastro de candidatos
+- **Isolamento de dados** rigoroso entre empresas concorrentes
+- Prevenção contra *User Enumeration* no fluxo de recuperação de senha
