@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu as MenuIcon, ChevronDown, User as UserIcon, LogOut, Sun, Moon, Home } from 'lucide-react';
-import { useAuthStore } from '@/store/authStore';
+﻿import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu as MenuIcon, Moon, Sun, ChevronDown, LogOut, User as UserIcon } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { useAuthStore } from '@/store/authStore';
 import { NotificationDropdown } from './NotificationDropdown';
 
 interface PortalHeaderProps {
@@ -14,7 +14,6 @@ interface PortalHeaderProps {
 export function PortalHeader({ onMenuClick, userName, saudacao }: PortalHeaderProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const logout = useAuthStore(s => s.logout);
 
@@ -42,16 +41,6 @@ export function PortalHeader({ onMenuClick, userName, saudacao }: PortalHeaderPr
             <MenuIcon className="w-5 h-5" />
           </button>
 
-          {/* Botão para voltar à home */}
-          <button
-            onClick={() => navigate('/')}
-            className="p-2 rounded-btn text-content-secondary hover:bg-surface-tertiary dark:hover:bg-surface-dark-tertiary transition-colors"
-            aria-label="Voltar para a página inicial"
-            title="Página inicial"
-          >
-            <Home className="w-5 h-5" />
-          </button>
-
           <div>
             <h2 className="text-sm font-semibold text-content dark:text-content-dark">
               Olá, {userName?.split(' ')[0] || 'usuário'}
@@ -69,7 +58,6 @@ export function PortalHeader({ onMenuClick, userName, saudacao }: PortalHeaderPr
             {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
           </button>
 
-          {/* Sistema de notificações */}
           <NotificationDropdown />
 
           <div className="relative" ref={dropdownRef}>

@@ -1,8 +1,10 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, FileCheck, Send, ArrowRight, MapPin, Briefcase, GraduationCap } from 'lucide-react';
+import { Search, FileCheck, Send, ArrowRight, Briefcase, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useAreasPopulares } from '@/hooks/useAreasPopulares';
 
 const steps = [
   {
@@ -22,25 +24,29 @@ const steps = [
   },
 ];
 
-const partners = [
-  'Comércio Arcoverde', 'Grupo Ferreira', 'TechNordeste', 'Construtora Silva',
-  'Supermercado Central', 'Clínica Vida',
-];
-
 export default function Home() {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+  const { data: areasPopulares, isLoading } = useAreasPopulares();
+
+  const heroAnimation = useScrollAnimation({ threshold: 0.1 });
+  const popularesAnimation = useScrollAnimation({ threshold: 0.2 });
+  const messageAnimation = useScrollAnimation({ threshold: 0.3 });
+  const stepsAnimation = useScrollAnimation({ threshold: 0.1 });
+  const shortcutsAnimation = useScrollAnimation({ threshold: 0.1 });
+  const ctaAnimation = useScrollAnimation({ threshold: 0.2 });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(search ? `/vagas?titulo=${encodeURIComponent(search)}` : '/vagas');
+    navigate(search ? /vagas?titulo= : '/vagas');
   };
 
   return (
     <div className="animate-fade-in">
-      {/* HERO com busca centralizada */}
-      <section className="relative overflow-hidden">
-        {/* Formas orgânicas decorativas */}
+      <section
+        ref={heroAnimation.ref}
+        className={elative overflow-hidden transition-all duration-700 }
+      >
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <div className="absolute -top-24 -right-24 w-96 h-96 rounded-organic bg-primary-100 dark:bg-primary-900/20 opacity-60" />
           <div className="absolute -bottom-32 -left-24 w-80 h-80 rounded-organic-sm bg-primary-50 dark:bg-primary-900/10 opacity-50" />
@@ -64,7 +70,6 @@ export default function Home() {
               Conectamos talentos locais às melhores oportunidades de emprego. Cadastre-se, valide seu currículo e candidate-se em minutos.
             </p>
 
-            {/* Barra de busca centralizada */}
             <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-8">
               <div className="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl bg-surface dark:bg-surface-dark-secondary border border-border dark:border-border-dark shadow-card">
                 <div className="flex-1 flex items-center gap-3 px-4">
@@ -85,41 +90,54 @@ export default function Home() {
               </div>
             </form>
 
-            {/* Buscas populares */}
-            <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
+            <div
+              ref={popularesAnimation.ref}
+              className={lex flex-wrap items-center justify-center gap-2 text-sm transition-all duration-700 delay-200 }
+            >
               <span className="text-content-muted">Populares:</span>
-              {['Vendedor', 'Administrativo', 'Tecnologia', 'Saúde'].map(t => (
-                <button
-                  key={t}
-                  onClick={() => navigate(`/vagas?titulo=${encodeURIComponent(t)}`)}
-                  className="px-3 py-1 rounded-full border border-border dark:border-border-dark text-content-secondary dark:text-content-secondary hover:border-primary-500 hover:text-primary-500 transition-colors"
-                >
-                  {t}
-                </button>
-              ))}
+              {isLoading ? (
+                <span className="text-content-muted animate-pulse">Carregando...</span>
+              ) : areasPopulares && areasPopulares.length > 0 ? (
+                areasPopulares.map(area => (
+                  <button
+                    key={area.nome}
+                    onClick={() => navigate(/vagas?titulo=)}
+                    className="px-3 py-1 rounded-full border border-border dark:border-border-dark text-content-secondary dark:text-content-secondary hover:border-primary-500 hover:text-primary-500 transition-colors"
+                  >
+                    {area.nome}
+                  </button>
+                ))
+              ) : (
+                ['Tecnologia', 'Saúde', 'Administrativo', 'Vendedor'].map(t => (
+                  <button
+                    key={t}
+                    onClick={() => navigate(/vagas?titulo=)}
+                    className="px-3 py-1 rounded-full border border-border dark:border-border-dark text-content-secondary dark:text-content-secondary hover:border-primary-500 hover:text-primary-500 transition-colors"
+                  >
+                    {t}
+                  </button>
+                ))
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      {/* LOGOS de empresas parceiras */}
-      <section className="py-10 border-y border-border dark:border-border-dark bg-surface-secondary dark:bg-surface-dark-secondary">
+      <section
+        ref={messageAnimation.ref}
+        className={py-12 border-y border-border dark:border-border-dark bg-surface-secondary dark:bg-surface-dark-secondary transition-all duration-700 }
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-xs uppercase tracking-widest text-content-muted mb-6">
-            Empresas que contratam pela plataforma
+          <p className="text-center text-sm sm:text-base lg:text-lg font-semibold text-content-secondary dark:text-content-secondary max-w-3xl mx-auto leading-relaxed">
+            Conectando trabalhadores ao mercado de trabalho, é a prefeitura de Arcoverde facilitando a sua vida!
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-            {partners.map(p => (
-              <span key={p} className="text-content-muted dark:text-content-muted font-semibold text-sm lg:text-base opacity-70 hover:opacity-100 transition-opacity">
-                {p}
-              </span>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* COMO FUNCIONA */}
-      <section className="py-20">
+      <section
+        ref={stepsAnimation.ref}
+        className={py-20 transition-all duration-700 }
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="text-3xl lg:text-4xl font-bold text-content dark:text-content-dark mb-3">Como funciona</h2>
@@ -131,53 +149,85 @@ export default function Home() {
             {steps.map((step, i) => {
               const Icon = step.icon;
               return (
-                <Card key={i} hoverable padding="lg" className="relative overflow-hidden">
-                  <div className="absolute top-4 right-4 text-6xl font-extrabold text-primary-50 dark:text-primary-900/30 select-none">
-                    0{i + 1}
-                  </div>
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-organic-sm bg-primary-500 text-white flex items-center justify-center mb-5 shadow-glow">
-                      <Icon className="w-6 h-6" />
+                <div
+                  key={i}
+                  className="transition-all duration-500 ease-out"
+                  style={{
+                    transitionDelay: ${i * 150}ms,
+                    opacity: stepsAnimation.isVisible ? 1 : 0,
+                    transform: stepsAnimation.isVisible ? 'translateY(0)' : 'translateY(30px)',
+                  }}
+                >
+                  <Card hoverable padding="lg" className="relative overflow-hidden h-full">
+                    <div className="absolute top-4 right-4 text-6xl font-extrabold text-primary-50 dark:text-primary-900/30 select-none">
+                      0{i + 1}
                     </div>
-                    <h3 className="text-lg font-semibold text-content dark:text-content-dark mb-2">{step.title}</h3>
-                    <p className="text-sm text-content-secondary dark:text-content-secondary leading-relaxed">{step.description}</p>
-                  </div>
-                </Card>
+                    <div className="relative">
+                      <div className="w-14 h-14 rounded-organic-sm bg-primary-500 text-white flex items-center justify-center mb-5 shadow-glow">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-content dark:text-content-dark mb-2">{step.title}</h3>
+                      <p className="text-sm text-content-secondary dark:text-content-secondary leading-relaxed">{step.description}</p>
+                    </div>
+                  </Card>
+                </div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* ATALHOS rápidos */}
-      <section className="pb-20">
+      <section
+        ref={shortcutsAnimation.ref}
+        className={pb-20 transition-all duration-700 }
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-6">
-          <Card hoverable padding="lg" className="flex items-center gap-5 group cursor-pointer" onClick={() => navigate('/vagas')}>
-            <div className="w-16 h-16 rounded-organic bg-primary-500 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-              <Briefcase className="w-8 h-8" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg text-content dark:text-content-dark mb-1">Explorar vagas</h3>
-              <p className="text-sm text-content-secondary dark:text-content-secondary">Veja todas as oportunidades abertas em Arcoverde e região.</p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-primary-500 group-hover:translate-x-1 transition-transform" />
-          </Card>
+          <div
+            className="transition-all duration-500 ease-out"
+            style={{
+              transitionDelay: '0ms',
+              opacity: shortcutsAnimation.isVisible ? 1 : 0,
+              transform: shortcutsAnimation.isVisible ? 'translateX(0)' : 'translateX(-30px)',
+            }}
+          >
+            <Card hoverable padding="lg" className="flex items-center gap-5 group cursor-pointer h-full" onClick={() => navigate('/vagas')}>
+              <div className="w-16 h-16 rounded-organic bg-primary-500 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <Briefcase className="w-8 h-8" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg text-content dark:text-content-dark mb-1">Explorar vagas</h3>
+                <p className="text-sm text-content-secondary dark:text-content-secondary">Veja todas as oportunidades abertas em Arcoverde e região.</p>
+              </div>
+              <ArrowRight className="w-5 h-5 text-primary-500 group-hover:translate-x-1 transition-transform" />
+            </Card>
+          </div>
 
-          <Card hoverable padding="lg" className="flex items-center gap-5 group cursor-pointer" onClick={() => navigate('/cursos')}>
-            <div className="w-16 h-16 rounded-organic-sm bg-primary-700 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-              <GraduationCap className="w-8 h-8" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg text-content dark:text-content-dark mb-1">Cursos gratuitos</h3>
-              <p className="text-sm text-content-secondary dark:text-content-secondary">Capacite-se com os cursos oferecidos pela Prefeitura.</p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-primary-500 group-hover:translate-x-1 transition-transform" />
-          </Card>
+          <div
+            className="transition-all duration-500 ease-out"
+            style={{
+              transitionDelay: '150ms',
+              opacity: shortcutsAnimation.isVisible ? 1 : 0,
+              transform: shortcutsAnimation.isVisible ? 'translateX(0)' : 'translateX(30px)',
+            }}
+          >
+            <Card hoverable padding="lg" className="flex items-center gap-5 group cursor-pointer h-full" onClick={() => navigate('/cursos')}>
+              <div className="w-16 h-16 rounded-organic-sm bg-primary-700 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <GraduationCap className="w-8 h-8" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg text-content dark:text-content-dark mb-1">Cursos gratuitos</h3>
+                <p className="text-sm text-content-secondary dark:text-content-secondary">Capacite-se com os cursos oferecidos pela Prefeitura.</p>
+              </div>
+              <ArrowRight className="w-5 h-5 text-primary-500 group-hover:translate-x-1 transition-transform" />
+            </Card>
+          </div>
         </div>
       </section>
 
-      {/* CTA FINAL */}
-      <section className="pb-20">
+      <section
+        ref={ctaAnimation.ref}
+        className={pb-20 transition-all duration-700 }
+      >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-500 via-primary-600 to-primary-800 text-white p-10 lg:p-16 text-center shadow-2xl">
             <div className="absolute -top-16 -right-16 w-64 h-64 rounded-organic bg-white/10" aria-hidden="true" />

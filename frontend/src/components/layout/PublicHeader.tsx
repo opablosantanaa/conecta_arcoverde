@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -27,8 +27,7 @@ export function PublicHeader() {
     <header className="sticky top-0 z-50 glass border-b border-border dark:border-border-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to={token ? '/dashboard' : '/'} className="flex items-center gap-2 group">
             <div className="w-9 h-9 rounded-btn bg-primary-500 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
               <Briefcase className="w-5 h-5" />
             </div>
@@ -37,25 +36,25 @@ export function PublicHeader() {
             </span>
           </Link>
 
-          {/* Nav desktop */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navItems.map(item => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  'px-4 py-2 rounded-btn text-sm font-medium transition-colors',
-                  isActive(item.to)
-                    ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                    : 'text-content-secondary dark:text-content-secondary hover:text-content dark:hover:text-content-dark hover:bg-surface-tertiary dark:hover:bg-surface-dark-tertiary'
-                )}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
+          {!token && (
+            <nav className="hidden md:flex items-center gap-1">
+              {navItems.map(item => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={cn(
+                    'px-4 py-2 rounded-btn text-sm font-medium transition-colors',
+                    isActive(item.to)
+                      ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                      : 'text-content-secondary dark:text-content-secondary hover:text-content dark:hover:text-content-dark hover:bg-surface-tertiary dark:hover:bg-surface-dark-tertiary'
+                  )}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+          )}
 
-          {/* Actions */}
           <div className="flex items-center gap-2">
             <button
               onClick={toggleTheme}
@@ -93,11 +92,10 @@ export function PublicHeader() {
         </div>
       </div>
 
-      {/* Mobile drawer */}
       {mobileOpen && (
         <div className="md:hidden border-t border-border dark:border-border-dark bg-surface dark:bg-surface-dark">
           <nav className="px-4 py-4 space-y-1">
-            {navItems.map(item => (
+            {!token && navItems.map(item => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -115,15 +113,15 @@ export function PublicHeader() {
             <div className="pt-4 border-t border-border dark:border-border-dark space-y-2">
               {token ? (
                 <Button asChild variant="primary" fullWidth>
-                  <Link to="/dashboard">Acessar Portal</Link>
+                  <Link to="/dashboard" onClick={() => setMobileOpen(false)}>Acessar Portal</Link>
                 </Button>
               ) : (
                 <>
                   <Button asChild variant="outline" fullWidth>
-                    <Link to="/login">Entrar</Link>
+                    <Link to="/login" onClick={() => setMobileOpen(false)}>Entrar</Link>
                   </Button>
                   <Button asChild variant="primary" fullWidth>
-                    <Link to="/registro">Registrar</Link>
+                    <Link to="/registro" onClick={() => setMobileOpen(false)}>Registrar</Link>
                   </Button>
                 </>
               )}

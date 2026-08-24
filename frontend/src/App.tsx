@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { CandidatoLayout } from '@/components/layout/CandidatoLayout';
@@ -9,51 +9,58 @@ import { AdminLayout } from '@/components/layout/AdminLayout';
 import { SmartRedirect } from '@/components/auth/SmartRedirect';
 
 // Público
-import Home               from '@/pages/public/Home';
-import Vagas              from '@/pages/public/Vagas';
-import Cursos             from '@/pages/public/Cursos';
+import Home from '@/pages/public/Home';
+import Vagas from '@/pages/public/Vagas';
+import Cursos from '@/pages/public/Cursos';
 import DetalheVagaPublica from '@/pages/public/DetalheVagaPublica';
-import Login              from '@/pages/auth/Login';
-import Register           from '@/pages/auth/Register';
-import TermosDeUso        from '@/pages/public/TermosDeUso';
-import PoliticaPrivacidade  from '@/pages/public/PoliticaPrivacidade';
+import Login from '@/pages/auth/Login';
+import Register from '@/pages/auth/Register';
+import TermosDeUso from '@/pages/public/TermosDeUso';
+import PoliticaPrivacidade from '@/pages/public/PoliticaPrivacidade';
 
 // Candidato
-import Dashboard       from '@/pages/candidato/Dashboard';
-import Curriculo       from '@/pages/candidato/Curriculo';
-import Candidaturas    from '@/pages/candidato/Candidaturas';
+import Dashboard from '@/pages/candidato/Dashboard';
+import Curriculo from '@/pages/candidato/Curriculo';
+import Candidaturas from '@/pages/candidato/Candidaturas';
 import CursosInscritos from '@/pages/candidato/CursosInscritos';
-import Perfil          from '@/pages/candidato/Perfil';
+import Perfil from '@/pages/candidato/Perfil';
+import VagasCandidato from '@/pages/candidato/VagasCandidato';
+import CursosCandidato from '@/pages/candidato/CursosCandidato';
 
 // Empresa
-import EmpresaDashboard    from '@/pages/empresa/Dashboard';
-import MinhasVagas         from '@/pages/empresa/MinhasVagas';
-import DetalheVaga         from '@/pages/empresa/DetalheVaga';
-import CandidatosVaga      from '@/pages/empresa/CandidatosVaga';
-import Solicitacoes        from '@/pages/empresa/Solicitacoes';
-import SolicitarAlteracao  from '@/pages/empresa/SolicitarAlteracao';
-import PerfilEmpresa       from '@/pages/empresa/PerfilEmpresa';
-import Candidatos         from '@/pages/empresa/Candidatos';
+import EmpresaDashboard from '@/pages/empresa/EmpresaDashboard';
+import MinhasVagas from '@/pages/empresa/MinhasVagas';
+import Candidatos from '@/pages/empresa/Candidatos';
+import DetalheVaga from '@/pages/empresa/DetalheVaga';
+import CandidatosVaga from '@/pages/empresa/CandidatosVaga';
+import SolicitarAlteracao from '@/pages/empresa/SolicitarAlteracao';
+import Solicitacoes from '@/pages/empresa/Solicitacoes';
+import PerfilEmpresa from '@/pages/empresa/PerfilEmpresa';
 
 // ACA
-import AcaDashboard      from '@/pages/aca/Dashboard';
-import GerenciarVagas    from '@/pages/aca/GerenciarVagas';
+import AcaDashboard from '@/pages/aca/AcaDashboard';
+import GerenciarVagas from '@/pages/aca/GerenciarVagas';
 import ValidarCurriculos from '@/pages/aca/ValidarCurriculos';
 import CadastroAssistido from '@/pages/aca/CadastroAssistido';
-import SolicitacoesAca   from '@/pages/aca/SolicitacoesAca';
+import SolicitacoesAca from '@/pages/aca/SolicitacoesAca';
 
 // Prefeitura
-import PrefeituraDashboard from '@/pages/prefeitura/Dashboard';
-import GerenciarCursos     from '@/pages/prefeitura/GerenciarCursos';
+import PrefeituraDashboard from '@/pages/prefeitura/PrefeituraDashboard';
+import GerenciarCursos from '@/pages/prefeitura/GerenciarCursos';
 
 // Admin
-import AdminDashboard  from '@/pages/admin/Dashboard';
-import Usuarios        from '@/pages/admin/Usuarios';
-import Permissoes      from '@/pages/admin/Permissoes';
-import Auditoria       from '@/pages/admin/Auditoria';
-import Configuracoes   from '@/pages/admin/Configuracoes';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import Usuarios from '@/pages/admin/Usuarios';
+import Permissoes from '@/pages/admin/Permissoes';
+import Auditoria from '@/pages/admin/Auditoria';
+import Configuracoes from '@/pages/admin/Configuracoes';
 
 function PublicOnly({ children }: { children: React.ReactNode }) {
+  const token = useAuthStore(s => s.token);
+  return token ? <SmartRedirect /> : <>{children}</>;
+}
+
+function PublicHomeOnly({ children }: { children: React.ReactNode }) {
   const token = useAuthStore(s => s.token);
   return token ? <SmartRedirect /> : <>{children}</>;
 }
@@ -77,7 +84,7 @@ function App() {
       <Routes>
         {/* Público */}
         <Route element={<PublicLayout />}>
-          <Route path="/"          element={<Home />} />
+          <Route path="/"          element={<PublicHomeOnly><Home /></PublicHomeOnly>} />
           <Route path="/vagas"     element={<Vagas />} />
           <Route path="/vagas/:id" element={<DetalheVagaPublica />} />
           <Route path="/cursos"    element={<Cursos />} />
@@ -92,11 +99,13 @@ function App() {
 
         {/* Portal do Candidato */}
         <Route element={<Protected perfis={['CANDIDATO']}><CandidatoLayout /></Protected>}>
-          <Route path="/candidato"             element={<Dashboard />} />
-          <Route path="/candidato/curriculo"    element={<Curriculo />} />
-          <Route path="/candidato/candidaturas" element={<Candidaturas />} />
-          <Route path="/candidato/cursos"       element={<CursosInscritos />} />
-          <Route path="/candidato/perfil"       element={<Perfil />} />
+          <Route path="/candidato"                    element={<Dashboard />} />
+          <Route path="/candidato/vagas"              element={<VagasCandidato />} />
+          <Route path="/candidato/cursos"             element={<CursosCandidato />} />
+          <Route path="/candidato/curriculo"          element={<Curriculo />} />
+          <Route path="/candidato/candidaturas"       element={<Candidaturas />} />
+          <Route path="/candidato/cursos-inscritos"   element={<CursosInscritos />} />
+          <Route path="/candidato/perfil"             element={<Perfil />} />
         </Route>
 
         {/* Portal da Empresa */}
@@ -121,7 +130,7 @@ function App() {
           <Route path="/aca/solicitacoes"       element={<SolicitacoesAca />} />
         </Route>
 
-        {/* Portal Prefeitura (sem Indicadores e Relatórios) */}
+        {/* Portal Prefeitura */}
         <Route element={<Protected perfis={['PREFEITURA', 'ADMIN']}><PrefeituraLayout /></Protected>}>
           <Route path="/prefeitura"        element={<PrefeituraDashboard />} />
           <Route path="/prefeitura/vagas"  element={<GerenciarVagas />} />
