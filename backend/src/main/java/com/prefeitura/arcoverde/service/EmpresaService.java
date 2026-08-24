@@ -58,12 +58,12 @@ public class EmpresaService {
     @Transactional
     public EmpresaResponse criar(EmpresaRequest request) {
         // Validação de email obrigatório
-        if (request.email() == null || request.email().isBlank()) {
+        if (request.emailContato() == null || request.emailContato().isBlank()) {
             throw new BusinessException("Email da empresa é obrigatório");
         }
 
         // Verificar se email já está em uso
-        if (usuarioRepository.existsByEmail(request.email())) {
+        if (usuarioRepository.existsByEmail(request.emailContato())) {
             throw new BusinessException("Email já está em uso por outro usuário");
         }
 
@@ -73,7 +73,7 @@ public class EmpresaService {
         // Criar usuário da empresa com email real e senha automática
         Usuario usuario = Usuario.builder()
                 .nome(request.nomeFantasia())
-                .email(request.email())
+                .email(request.emailContato())
                 .senhaHash(passwordEncoder.encode(senhaAutomatica))
                 .cpf("000.000.000-" + String.format("%02d", (int)(Math.random() * 100)))
                 .telefone(request.telefone())
@@ -98,7 +98,7 @@ public class EmpresaService {
         empresa = empresaRepository.save(empresa);
         
         // TODO: Enviar email com a senha automática para o usuário
-        // emailService.enviarSenhaTemporaria(request.email(), senhaAutomatica);
+        // emailService.enviarSenhaTemporaria(request.emailContato(), senhaAutomatica);
         
         return EmpresaResponse.from(empresa);
     }
