@@ -62,16 +62,19 @@ export default function Usuarios() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-usuarios'] }),
   });
     const resetMutation = useMutation({
-        mutationFn: (payload: { id: number; novaSenha: string }) =>
-            api.put(`/admin/usuarios/${payload.id}`, {
-                nome: '',
-                email: '',
+        mutationFn: async (payload: { id: number; novaSenha: string }) => {
+            const response = await api.get(`/admin/usuarios/${payload.id}`);
+            const userData = response.data;
+            return api.put(`/admin/usuarios/${payload.id}`, {
+                nome: userData.nome,
+                email: userData.email,
                 senha: payload.novaSenha,
-                cpf: '',
-                telefone: '',
-                perfil: 'ADMIN',
-                ativo: true,
-            }),
+                cpf: userData.cpf || '',
+                telefone: userData.telefone || '',
+                perfil: userData.perfil,
+                ativo: userData.ativo,
+            });
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-usuarios'] });
             setModalReset(null);
