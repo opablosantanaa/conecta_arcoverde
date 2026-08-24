@@ -83,11 +83,14 @@ public class EmpresaService {
 
         usuario = usuarioRepository.save(usuario);
 
+        // Tratar CNPJ vazio como null para evitar violação de constraint UNIQUE
+        String cnpjLimpo = (request.cnpj() != null && !request.cnpj().isBlank()) ? request.cnpj() : null;
+        
         Empresa empresa = Empresa.builder()
                 .usuario(usuario)
                 .nomeFantasia(request.nomeFantasia())
                 .razaoSocial(request.razaoSocial())
-                .cnpj(request.cnpj())
+                .cnpj(cnpjLimpo)
                 .emailContato(request.emailContato())
                 .telefone(request.telefone())
                 .endereco(request.endereco())
