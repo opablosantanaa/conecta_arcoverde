@@ -15,6 +15,7 @@ spring:
       keepalive-time: 300000
       connection-test-query: SELECT 1
       pool-name: ConectaArcoverdePool
+      auto-commit: false
 
   jpa:
     hibernate:
@@ -26,8 +27,6 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         jdbc:
           time_zone: America/Recife
-        connection:
-          provider_disables_autocommit: true
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
