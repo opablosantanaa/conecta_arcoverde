@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, FileCheck, Send, ArrowRight, Briefcase, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -38,14 +38,16 @@ export default function Home() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(search ? /vagas?titulo= : '/vagas');
+    navigate(search ? '/vagas?titulo=' + encodeURIComponent(search) : '/vagas');
   };
 
   return (
     <div className="animate-fade-in">
+      {/* HERO */}
       <section
         ref={heroAnimation.ref}
-        className={elative overflow-hidden transition-all duration-700 }
+        className={'relative overflow-hidden transition-all duration-700 ' +
+          (heroAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}
       >
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <div className="absolute -top-24 -right-24 w-96 h-96 rounded-organic bg-primary-100 dark:bg-primary-900/20 opacity-60" />
@@ -90,9 +92,11 @@ export default function Home() {
               </div>
             </form>
 
+            {/* Populares – dados dinâmicos do backend */}
             <div
               ref={popularesAnimation.ref}
-              className={lex flex-wrap items-center justify-center gap-2 text-sm transition-all duration-700 delay-200 }
+              className={'flex flex-wrap items-center justify-center gap-2 text-sm transition-all duration-700 delay-200 ' +
+                (popularesAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}
             >
               <span className="text-content-muted">Populares:</span>
               {isLoading ? (
@@ -101,7 +105,7 @@ export default function Home() {
                 areasPopulares.map(area => (
                   <button
                     key={area.nome}
-                    onClick={() => navigate(/vagas?titulo=)}
+                    onClick={() => navigate('/vagas?titulo=' + encodeURIComponent(area.nome))}
                     className="px-3 py-1 rounded-full border border-border dark:border-border-dark text-content-secondary dark:text-content-secondary hover:border-primary-500 hover:text-primary-500 transition-colors"
                   >
                     {area.nome}
@@ -111,7 +115,7 @@ export default function Home() {
                 ['Tecnologia', 'Saúde', 'Administrativo', 'Vendedor'].map(t => (
                   <button
                     key={t}
-                    onClick={() => navigate(/vagas?titulo=)}
+                    onClick={() => navigate('/vagas?titulo=' + encodeURIComponent(t))}
                     className="px-3 py-1 rounded-full border border-border dark:border-border-dark text-content-secondary dark:text-content-secondary hover:border-primary-500 hover:text-primary-500 transition-colors"
                   >
                     {t}
@@ -123,9 +127,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* MENSAGEM INSTITUCIONAL */}
       <section
         ref={messageAnimation.ref}
-        className={py-12 border-y border-border dark:border-border-dark bg-surface-secondary dark:bg-surface-dark-secondary transition-all duration-700 }
+        className={'py-12 border-y border-border dark:border-border-dark bg-surface-secondary dark:bg-surface-dark-secondary transition-all duration-700 ' +
+          (messageAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm sm:text-base lg:text-lg font-semibold text-content-secondary dark:text-content-secondary max-w-3xl mx-auto leading-relaxed">
@@ -134,9 +140,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* COMO FUNCIONA */}
       <section
         ref={stepsAnimation.ref}
-        className={py-20 transition-all duration-700 }
+        className={'py-20 transition-all duration-700 ' +
+          (stepsAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
@@ -153,14 +161,14 @@ export default function Home() {
                   key={i}
                   className="transition-all duration-500 ease-out"
                   style={{
-                    transitionDelay: ${i * 150}ms,
+                    transitionDelay: (i * 150) + 'ms',
                     opacity: stepsAnimation.isVisible ? 1 : 0,
                     transform: stepsAnimation.isVisible ? 'translateY(0)' : 'translateY(30px)',
                   }}
                 >
                   <Card hoverable padding="lg" className="relative overflow-hidden h-full">
                     <div className="absolute top-4 right-4 text-6xl font-extrabold text-primary-50 dark:text-primary-900/30 select-none">
-                      0{i + 1}
+                      {'0' + (i + 1)}
                     </div>
                     <div className="relative">
                       <div className="w-14 h-14 rounded-organic-sm bg-primary-500 text-white flex items-center justify-center mb-5 shadow-glow">
@@ -177,9 +185,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ATALHOS */}
       <section
         ref={shortcutsAnimation.ref}
-        className={pb-20 transition-all duration-700 }
+        className={'pb-20 transition-all duration-700 ' +
+          (shortcutsAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-6">
           <div
@@ -224,9 +234,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* CTA FINAL */}
       <section
         ref={ctaAnimation.ref}
-        className={pb-20 transition-all duration-700 }
+        className={'pb-20 transition-all duration-700 ' +
+          (ctaAnimation.isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95')}
       >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-500 via-primary-600 to-primary-800 text-white p-10 lg:p-16 text-center shadow-2xl">

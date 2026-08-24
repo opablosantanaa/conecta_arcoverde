@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu as MenuIcon, Moon, Sun, ChevronDown, LogOut, User as UserIcon } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';

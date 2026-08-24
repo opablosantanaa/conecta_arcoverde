@@ -1,4 +1,4 @@
-﻿package com.prefeitura.arcoverde.repository;
+package com.prefeitura.arcoverde.repository;
 
 import com.prefeitura.arcoverde.model.AreaInteresse;
 import org.springframework.data.jpa.repository.JpaRepository;

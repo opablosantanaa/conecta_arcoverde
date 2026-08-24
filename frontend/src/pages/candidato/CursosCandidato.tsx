@@ -1,1 +1,1 @@
-﻿export { default } from '@/pages/public/Cursos';
+export { default } from '@/pages/public/Cursos';

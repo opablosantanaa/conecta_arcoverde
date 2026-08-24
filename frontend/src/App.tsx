@@ -1,4 +1,4 @@
-﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { CandidatoLayout } from '@/components/layout/CandidatoLayout';
@@ -8,7 +8,6 @@ import { PrefeituraLayout } from '@/components/layout/PrefeituraLayout';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { SmartRedirect } from '@/components/auth/SmartRedirect';
 
-// Público
 import Home from '@/pages/public/Home';
 import Vagas from '@/pages/public/Vagas';
 import Cursos from '@/pages/public/Cursos';
@@ -18,7 +17,6 @@ import Register from '@/pages/auth/Register';
 import TermosDeUso from '@/pages/public/TermosDeUso';
 import PoliticaPrivacidade from '@/pages/public/PoliticaPrivacidade';
 
-// Candidato
 import Dashboard from '@/pages/candidato/Dashboard';
 import Curriculo from '@/pages/candidato/Curriculo';
 import Candidaturas from '@/pages/candidato/Candidaturas';
@@ -27,7 +25,6 @@ import Perfil from '@/pages/candidato/Perfil';
 import VagasCandidato from '@/pages/candidato/VagasCandidato';
 import CursosCandidato from '@/pages/candidato/CursosCandidato';
 
-// Empresa
 import EmpresaDashboard from '@/pages/empresa/EmpresaDashboard';
 import MinhasVagas from '@/pages/empresa/MinhasVagas';
 import Candidatos from '@/pages/empresa/Candidatos';
@@ -37,18 +34,15 @@ import SolicitarAlteracao from '@/pages/empresa/SolicitarAlteracao';
 import Solicitacoes from '@/pages/empresa/Solicitacoes';
 import PerfilEmpresa from '@/pages/empresa/PerfilEmpresa';
 
-// ACA
 import AcaDashboard from '@/pages/aca/AcaDashboard';
 import GerenciarVagas from '@/pages/aca/GerenciarVagas';
 import ValidarCurriculos from '@/pages/aca/ValidarCurriculos';
 import CadastroAssistido from '@/pages/aca/CadastroAssistido';
 import SolicitacoesAca from '@/pages/aca/SolicitacoesAca';
 
-// Prefeitura
 import PrefeituraDashboard from '@/pages/prefeitura/PrefeituraDashboard';
 import GerenciarCursos from '@/pages/prefeitura/GerenciarCursos';
 
-// Admin
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import Usuarios from '@/pages/admin/Usuarios';
 import Permissoes from '@/pages/admin/Permissoes';
@@ -68,13 +62,10 @@ function PublicHomeOnly({ children }: { children: React.ReactNode }) {
 function Protected({ children, perfis }: { children: React.ReactNode; perfis?: string[] }) {
   const token = useAuthStore(s => s.token);
   const user = useAuthStore(s => s.user);
-
   if (!token) return <Navigate to="/login" replace />;
-
   if (perfis && user?.perfil && !perfis.includes(user.perfil)) {
     return <SmartRedirect />;
   }
-
   return <>{children}</>;
 }
 
@@ -82,37 +73,33 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Público */}
         <Route element={<PublicLayout />}>
-          <Route path="/"          element={<PublicHomeOnly><Home /></PublicHomeOnly>} />
-          <Route path="/vagas"     element={<Vagas />} />
-          <Route path="/vagas/:id" element={<DetalheVagaPublica />} />
-          <Route path="/cursos"    element={<Cursos />} />
-          <Route path="/termos"     element={<TermosDeUso />} />
+          <Route path="/"            element={<PublicHomeOnly><Home /></PublicHomeOnly>} />
+          <Route path="/vagas"       element={<Vagas />} />
+          <Route path="/vagas/:id"   element={<DetalheVagaPublica />} />
+          <Route path="/cursos"      element={<Cursos />} />
+          <Route path="/termos"      element={<TermosDeUso />} />
           <Route path="/privacidade" element={<PoliticaPrivacidade />} />
         </Route>
 
-        {/* Auth */}
-        <Route path="/login"    element={<PublicOnly><Login /></PublicOnly>} />
-        <Route path="/registro" element={<PublicOnly><Register /></PublicOnly>} />
+        <Route path="/login"     element={<PublicOnly><Login /></PublicOnly>} />
+        <Route path="/registro"  element={<PublicOnly><Register /></PublicOnly>} />
         <Route path="/dashboard" element={<SmartRedirect />} />
 
-        {/* Portal do Candidato */}
         <Route element={<Protected perfis={['CANDIDATO']}><CandidatoLayout /></Protected>}>
-          <Route path="/candidato"                    element={<Dashboard />} />
-          <Route path="/candidato/vagas"              element={<VagasCandidato />} />
-          <Route path="/candidato/cursos"             element={<CursosCandidato />} />
-          <Route path="/candidato/curriculo"          element={<Curriculo />} />
-          <Route path="/candidato/candidaturas"       element={<Candidaturas />} />
-          <Route path="/candidato/cursos-inscritos"   element={<CursosInscritos />} />
-          <Route path="/candidato/perfil"             element={<Perfil />} />
+          <Route path="/candidato"                  element={<Dashboard />} />
+          <Route path="/candidato/vagas"            element={<VagasCandidato />} />
+          <Route path="/candidato/cursos"           element={<CursosCandidato />} />
+          <Route path="/candidato/curriculo"        element={<Curriculo />} />
+          <Route path="/candidato/candidaturas"     element={<Candidaturas />} />
+          <Route path="/candidato/cursos-inscritos" element={<CursosInscritos />} />
+          <Route path="/candidato/perfil"           element={<Perfil />} />
         </Route>
 
-        {/* Portal da Empresa */}
         <Route element={<Protected perfis={['EMPRESA']}><EmpresaLayout /></Protected>}>
           <Route path="/empresa"                               element={<EmpresaDashboard />} />
           <Route path="/empresa/vagas"                         element={<MinhasVagas />} />
-          <Route path="/empresa/candidatos"                  element={<Candidatos />} />
+          <Route path="/empresa/candidatos"                    element={<Candidatos />} />
           <Route path="/empresa/vagas/:id"                     element={<DetalheVaga />} />
           <Route path="/empresa/vagas/:id/candidatos"          element={<CandidatosVaga />} />
           <Route path="/empresa/vagas/:id/solicitar-alteracao" element={<SolicitarAlteracao />} />
@@ -120,7 +107,6 @@ function App() {
           <Route path="/empresa/perfil"                        element={<PerfilEmpresa />} />
         </Route>
 
-        {/* Portal ACA */}
         <Route element={<Protected perfis={['ACA', 'PREFEITURA', 'ADMIN']}><AcaLayout /></Protected>}>
           <Route path="/aca"                    element={<AcaDashboard />} />
           <Route path="/aca/vagas"              element={<GerenciarVagas />} />
@@ -130,14 +116,12 @@ function App() {
           <Route path="/aca/solicitacoes"       element={<SolicitacoesAca />} />
         </Route>
 
-        {/* Portal Prefeitura */}
         <Route element={<Protected perfis={['PREFEITURA', 'ADMIN']}><PrefeituraLayout /></Protected>}>
           <Route path="/prefeitura"        element={<PrefeituraDashboard />} />
           <Route path="/prefeitura/vagas"  element={<GerenciarVagas />} />
           <Route path="/prefeitura/cursos" element={<GerenciarCursos />} />
         </Route>
 
-        {/* Portal Admin */}
         <Route element={<Protected perfis={['ADMIN']}><AdminLayout /></Protected>}>
           <Route path="/admin"               element={<AdminDashboard />} />
           <Route path="/admin/usuarios"      element={<Usuarios />} />

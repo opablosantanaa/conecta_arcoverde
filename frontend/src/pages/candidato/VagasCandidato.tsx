@@ -1,1 +1,1 @@
-﻿export { default } from '@/pages/public/Vagas';
+export { default } from '@/pages/public/Vagas';

@@ -1,14 +1,14 @@
-﻿import { LayoutGrid, FileText, Briefcase, BookOpen, User, Search, GraduationCap } from 'lucide-react';
+import { LayoutGrid, FileText, Briefcase, BookOpen, User, Search, GraduationCap } from 'lucide-react';
 import { PortalLayout } from './PortalLayout';
 
 const candidateNavItems = [
-  { to: '/candidato',              label: 'Dashboard',           icon: LayoutGrid },
-  { to: '/candidato/vagas',        label: 'Explorar Vagas',      icon: Search },
-  { to: '/candidato/cursos',       label: 'Cursos Disponíveis',  icon: GraduationCap },
-  { to: '/candidato/curriculo',    label: 'Meu Currículo',       icon: FileText },
-  { to: '/candidato/candidaturas', label: 'Minhas Candidaturas', icon: Briefcase },
-  { to: '/candidato/cursos-inscritos', label: 'Cursos Inscritos', icon: BookOpen },
-  { to: '/candidato/perfil',       label: 'Perfil',              icon: User },
+  { to: '/candidato',                  label: 'Dashboard',           icon: LayoutGrid },
+  { to: '/candidato/vagas',            label: 'Explorar Vagas',      icon: Search },
+  { to: '/candidato/cursos',           label: 'Cursos Disponíveis',  icon: GraduationCap },
+  { to: '/candidato/curriculo',        label: 'Meu Currículo',       icon: FileText },
+  { to: '/candidato/candidaturas',     label: 'Minhas Candidaturas', icon: Briefcase },
+  { to: '/candidato/cursos-inscritos', label: 'Cursos Inscritos',    icon: BookOpen },
+  { to: '/candidato/perfil',           label: 'Perfil',              icon: User },
 ];
 
 export function CandidatoLayout() {
