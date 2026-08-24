@@ -30,41 +30,247 @@ public class EmpresaService {
         this.empresaRepository = empresaRepository;
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+    
+    /**
+     * Gera senha automática para novo usuário da empresa.
+     * Padrão: primeiroNomeEmpresa@123 ou primeiroNomeEmpresa@1234 (mínimo 8 caracteres)
+     */
+    private String gerarSenhaEmpresa(String nomeEmpresa) {
+        if (nomeEmpresa == null || nomeEmpresa.isBlank()) {
+            return "Empresa@1234";
+        }
+        
+        // Pega o primeiro nome da empresa (antes do primeiro espaço)
+        String primeiroNome = nomeEmpresa.split(" ")[0].trim();
+        
+        // Remove caracteres especiais e mantém apenas letras/números
+        primeiroNome = primeiroNome.replaceAll("[^a-zA-Z0-9]", "");
+        
+        if (primeiroNome.isEmpty()) {
+            primeiroNome = "Empresa";
+        }
+        
+        // Tenta com @123 primeiro
+        String senhaBase = primeiroNome + "@123";
+        
+        // Se não atingir 8 caracteres, adiciona mais um dígito
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@1234";
+        }
+        
+        // Se ainda não atingir 8, adiciona @12345
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@12345";
+        }
+        
+        return senhaBase;
     }
-
+}
     @Transactional(readOnly = true)
     public List<EmpresaResponse> listarTodas() {
         return empresaRepository.findAll().stream().map(EmpresaResponse::from).toList();
+    
+    /**
+     * Gera senha automática para novo usuário da empresa.
+     * Padrão: primeiroNomeEmpresa@123 ou primeiroNomeEmpresa@1234 (mínimo 8 caracteres)
+     */
+    private String gerarSenhaEmpresa(String nomeEmpresa) {
+        if (nomeEmpresa == null || nomeEmpresa.isBlank()) {
+            return "Empresa@1234";
+        }
+        
+        // Pega o primeiro nome da empresa (antes do primeiro espaço)
+        String primeiroNome = nomeEmpresa.split(" ")[0].trim();
+        
+        // Remove caracteres especiais e mantém apenas letras/números
+        primeiroNome = primeiroNome.replaceAll("[^a-zA-Z0-9]", "");
+        
+        if (primeiroNome.isEmpty()) {
+            primeiroNome = "Empresa";
+        }
+        
+        // Tenta com @123 primeiro
+        String senhaBase = primeiroNome + "@123";
+        
+        // Se não atingir 8 caracteres, adiciona mais um dígito
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@1234";
+        }
+        
+        // Se ainda não atingir 8, adiciona @12345
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@12345";
+        }
+        
+        return senhaBase;
     }
-
+}
     @Transactional(readOnly = true)
     public Page<EmpresaResponse> listarPaginado(Pageable pageable) {
         return empresaRepository.findAll(pageable).map(EmpresaResponse::from);
+    
+    /**
+     * Gera senha automática para novo usuário da empresa.
+     * Padrão: primeiroNomeEmpresa@123 ou primeiroNomeEmpresa@1234 (mínimo 8 caracteres)
+     */
+    private String gerarSenhaEmpresa(String nomeEmpresa) {
+        if (nomeEmpresa == null || nomeEmpresa.isBlank()) {
+            return "Empresa@1234";
+        }
+        
+        // Pega o primeiro nome da empresa (antes do primeiro espaço)
+        String primeiroNome = nomeEmpresa.split(" ")[0].trim();
+        
+        // Remove caracteres especiais e mantém apenas letras/números
+        primeiroNome = primeiroNome.replaceAll("[^a-zA-Z0-9]", "");
+        
+        if (primeiroNome.isEmpty()) {
+            primeiroNome = "Empresa";
+        }
+        
+        // Tenta com @123 primeiro
+        String senhaBase = primeiroNome + "@123";
+        
+        // Se não atingir 8 caracteres, adiciona mais um dígito
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@1234";
+        }
+        
+        // Se ainda não atingir 8, adiciona @12345
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@12345";
+        }
+        
+        return senhaBase;
     }
-
+}
     @Transactional(readOnly = true)
     public EmpresaResponse buscarPorId(Long id) {
         Empresa empresa = empresaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empresa não encontrada"));
         return EmpresaResponse.from(empresa);
+    
+    /**
+     * Gera senha automática para novo usuário da empresa.
+     * Padrão: primeiroNomeEmpresa@123 ou primeiroNomeEmpresa@1234 (mínimo 8 caracteres)
+     */
+    private String gerarSenhaEmpresa(String nomeEmpresa) {
+        if (nomeEmpresa == null || nomeEmpresa.isBlank()) {
+            return "Empresa@1234";
+        }
+        
+        // Pega o primeiro nome da empresa (antes do primeiro espaço)
+        String primeiroNome = nomeEmpresa.split(" ")[0].trim();
+        
+        // Remove caracteres especiais e mantém apenas letras/números
+        primeiroNome = primeiroNome.replaceAll("[^a-zA-Z0-9]", "");
+        
+        if (primeiroNome.isEmpty()) {
+            primeiroNome = "Empresa";
+        }
+        
+        // Tenta com @123 primeiro
+        String senhaBase = primeiroNome + "@123";
+        
+        // Se não atingir 8 caracteres, adiciona mais um dígito
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@1234";
+        }
+        
+        // Se ainda não atingir 8, adiciona @12345
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@12345";
+        }
+        
+        return senhaBase;
     }
-
+}
     @Transactional(readOnly = true)
     public Empresa buscarEntidadePorId(Long id) {
         return empresaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empresa não encontrada"));
+    
+    /**
+     * Gera senha automática para novo usuário da empresa.
+     * Padrão: primeiroNomeEmpresa@123 ou primeiroNomeEmpresa@1234 (mínimo 8 caracteres)
+     */
+    private String gerarSenhaEmpresa(String nomeEmpresa) {
+        if (nomeEmpresa == null || nomeEmpresa.isBlank()) {
+            return "Empresa@1234";
+        }
+        
+        // Pega o primeiro nome da empresa (antes do primeiro espaço)
+        String primeiroNome = nomeEmpresa.split(" ")[0].trim();
+        
+        // Remove caracteres especiais e mantém apenas letras/números
+        primeiroNome = primeiroNome.replaceAll("[^a-zA-Z0-9]", "");
+        
+        if (primeiroNome.isEmpty()) {
+            primeiroNome = "Empresa";
+        }
+        
+        // Tenta com @123 primeiro
+        String senhaBase = primeiroNome + "@123";
+        
+        // Se não atingir 8 caracteres, adiciona mais um dígito
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@1234";
+        }
+        
+        // Se ainda não atingir 8, adiciona @12345
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@12345";
+        }
+        
+        return senhaBase;
     }
-
+}
     @Transactional
-    public EmpresaResponse criar(EmpresaRequest request) {
+    public EmpresaResponse criar(EmpresaRequest request) {        if (request.email() == null || request.email().isBlank()) {
+            throw new BusinessException("Email da empresa é obrigatório");
+        }
         // Gerar e-mail e senha temporários para a empresa
         String emailTemp = "empresa_" + System.currentTimeMillis() + "@temporario.local";
         String senhaTemp = "Temp@12345";
 
         if (usuarioRepository.existsByEmail(emailTemp)) {
             emailTemp = "empresa_" + (System.currentTimeMillis() + 1) + "@temporario.local";
+        
+    /**
+     * Gera senha automática para novo usuário da empresa.
+     * Padrão: primeiroNomeEmpresa@123 ou primeiroNomeEmpresa@1234 (mínimo 8 caracteres)
+     */
+    private String gerarSenhaEmpresa(String nomeEmpresa) {
+        if (nomeEmpresa == null || nomeEmpresa.isBlank()) {
+            return "Empresa@1234";
         }
-
+        
+        // Pega o primeiro nome da empresa (antes do primeiro espaço)
+        String primeiroNome = nomeEmpresa.split(" ")[0].trim();
+        
+        // Remove caracteres especiais e mantém apenas letras/números
+        primeiroNome = primeiroNome.replaceAll("[^a-zA-Z0-9]", "");
+        
+        if (primeiroNome.isEmpty()) {
+            primeiroNome = "Empresa";
+        }
+        
+        // Tenta com @123 primeiro
+        String senhaBase = primeiroNome + "@123";
+        
+        // Se não atingir 8 caracteres, adiciona mais um dígito
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@1234";
+        }
+        
+        // Se ainda não atingir 8, adiciona @12345
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@12345";
+        }
+        
+        return senhaBase;
+    }
+}
         Usuario usuario = Usuario.builder()
                 .nome(request.nomeFantasia())
                 .email(emailTemp)
@@ -91,5 +297,75 @@ public class EmpresaService {
 
         empresa = empresaRepository.save(empresa);
         return EmpresaResponse.from(empresa);
+    
+    /**
+     * Gera senha automática para novo usuário da empresa.
+     * Padrão: primeiroNomeEmpresa@123 ou primeiroNomeEmpresa@1234 (mínimo 8 caracteres)
+     */
+    private String gerarSenhaEmpresa(String nomeEmpresa) {
+        if (nomeEmpresa == null || nomeEmpresa.isBlank()) {
+            return "Empresa@1234";
+        }
+        
+        // Pega o primeiro nome da empresa (antes do primeiro espaço)
+        String primeiroNome = nomeEmpresa.split(" ")[0].trim();
+        
+        // Remove caracteres especiais e mantém apenas letras/números
+        primeiroNome = primeiroNome.replaceAll("[^a-zA-Z0-9]", "");
+        
+        if (primeiroNome.isEmpty()) {
+            primeiroNome = "Empresa";
+        }
+        
+        // Tenta com @123 primeiro
+        String senhaBase = primeiroNome + "@123";
+        
+        // Se não atingir 8 caracteres, adiciona mais um dígito
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@1234";
+        }
+        
+        // Se ainda não atingir 8, adiciona @12345
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@12345";
+        }
+        
+        return senhaBase;
+    }
+}
+
+    /**
+     * Gera senha automática para novo usuário da empresa.
+     * Padrão: primeiroNomeEmpresa@123 ou primeiroNomeEmpresa@1234 (mínimo 8 caracteres)
+     */
+    private String gerarSenhaEmpresa(String nomeEmpresa) {
+        if (nomeEmpresa == null || nomeEmpresa.isBlank()) {
+            return "Empresa@1234";
+        }
+        
+        // Pega o primeiro nome da empresa (antes do primeiro espaço)
+        String primeiroNome = nomeEmpresa.split(" ")[0].trim();
+        
+        // Remove caracteres especiais e mantém apenas letras/números
+        primeiroNome = primeiroNome.replaceAll("[^a-zA-Z0-9]", "");
+        
+        if (primeiroNome.isEmpty()) {
+            primeiroNome = "Empresa";
+        }
+        
+        // Tenta com @123 primeiro
+        String senhaBase = primeiroNome + "@123";
+        
+        // Se não atingir 8 caracteres, adiciona mais um dígito
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@1234";
+        }
+        
+        // Se ainda não atingir 8, adiciona @12345
+        if (senhaBase.length() < 8) {
+            senhaBase = primeiroNome + "@12345";
+        }
+        
+        return senhaBase;
     }
 }
