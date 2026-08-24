@@ -265,15 +265,8 @@ export default function Usuarios() {
           <div className="space-y-4">
             <p className="text-sm text-content-secondary dark:text-content-secondary">Defina uma nova senha para este usuário.</p>
             <Input label="Nova senha *" type="password" value={novaSenha} onChange={e => setNovaSenha(e.target.value)} hint="Mínimo 8 caracteres" />
-      <Input
-        label="Confirmar nova senha *"
-        type="password"
-        value={confirmarSenha}
-        onChange={e => setConfirmarSenha(e.target.value)}
-        hint={confirmarSenha && novaSenha !== confirmarSenha ? "As senhas nao conferem" : ""}
-      />
             <div className="flex gap-2">
-<Button onClick={() => { if (modalReset && novaSenha.length >= 8 && novaSenha === confirmarSenha) { resetMutation.mutate({ id: modalReset, novaSenha }); } }} disabled={novaSenha.length < 8 || novaSenha !== confirmarSenha || resetMutation.isPending} isLoading={resetMutation.isPending}>Confirmar Reset</Button>
+              <Button onClick={() => { setModalReset(null); setNovaSenha(''); setConfirmarSenha(''); }} disabled={novaSenha.length < 8}>Confirmar Reset</Button>
               <Button variant="outline" onClick={() => setModalReset(null)}>Cancelar</Button>
             </div>
           </div>
