@@ -25,7 +25,7 @@ import Perfil from '@/pages/candidato/Perfil';
 import VagasCandidato from '@/pages/candidato/VagasCandidato';
 import CursosCandidato from '@/pages/candidato/CursosCandidato';
 
-import EmpresaDashboard from '@/pages/empresa/EmpresaDashboard';
+import EmpresaDashboard from '@/pages/empresa/Dashboard';
 import MinhasVagas from '@/pages/empresa/MinhasVagas';
 import Candidatos from '@/pages/empresa/Candidatos';
 import DetalheVaga from '@/pages/empresa/DetalheVaga';
@@ -34,16 +34,16 @@ import SolicitarAlteracao from '@/pages/empresa/SolicitarAlteracao';
 import Solicitacoes from '@/pages/empresa/Solicitacoes';
 import PerfilEmpresa from '@/pages/empresa/PerfilEmpresa';
 
-import AcaDashboard from '@/pages/aca/AcaDashboard';
+import AcaDashboard from '@/pages/aca/Dashboard';
 import GerenciarVagas from '@/pages/aca/GerenciarVagas';
 import ValidarCurriculos from '@/pages/aca/ValidarCurriculos';
 import CadastroAssistido from '@/pages/aca/CadastroAssistido';
 import SolicitacoesAca from '@/pages/aca/SolicitacoesAca';
 
-import PrefeituraDashboard from '@/pages/prefeitura/PrefeituraDashboard';
+import PrefeituraDashboard from '@/pages/prefeitura/Dashboard';
 import GerenciarCursos from '@/pages/prefeitura/GerenciarCursos';
 
-import AdminDashboard from '@/pages/admin/AdminDashboard';
+import AdminDashboard from '@/pages/admin/Dashboard';
 import Usuarios from '@/pages/admin/Usuarios';
 import Permissoes from '@/pages/admin/Permissoes';
 import Auditoria from '@/pages/admin/Auditoria';
